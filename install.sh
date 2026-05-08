@@ -141,6 +141,25 @@ if [ -x "$INSTALL_DIR/scripts/gen-placeholder-sounds.sh" ]; then
 fi
 
 # ─────────────────────────────────────────────
+# Slash 명령어 SKILL 등록 (~/.claude/skills/)
+# Claude 데스크톱 앱에서 / 자동완성 인식되도록
+# ─────────────────────────────────────────────
+if [ -d "$SOURCE_DIR/skills" ]; then
+  CLAUDE_SKILLS_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills"
+  mkdir -p "$CLAUDE_SKILLS_DIR"
+  SKILL_COUNT=0
+  for SKILL_SRC in "$SOURCE_DIR/skills"/*/; do
+    [ -d "$SKILL_SRC" ] || continue
+    SKILL_NAME=$(basename "$SKILL_SRC")
+    SKILL_DST="$CLAUDE_SKILLS_DIR/$SKILL_NAME"
+    rm -rf "$SKILL_DST"
+    cp -r "$SKILL_SRC" "$SKILL_DST"
+    SKILL_COUNT=$((SKILL_COUNT + 1))
+  done
+  ok "슬래시 명령어 ${SKILL_COUNT}개 등록: $CLAUDE_SKILLS_DIR"
+fi
+
+# ─────────────────────────────────────────────
 # Claude Code 훅 자동 등록
 # ─────────────────────────────────────────────
 info "Claude Code 훅 등록 중..."
