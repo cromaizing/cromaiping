@@ -3,237 +3,1221 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>크로마이핑 (Cromaiping) — AI 코딩 도구용 한국형 사운드 알림</title>
-  <meta name="description" content="Claude Code, Cursor, Codex 등 AI 코딩 도구가 작업을 끝낼 때 사운드와 알림으로 알려줍니다. 한국어 우선, 무료, 오픈소스.">
+  <title>크로마이핑 · 크로마이징</title>
+  <meta name="description" content="Claude Code, Cursor, Codex가 작업 끝낼 때 사운드와 알림으로 알려주는 한국형 도구. 30초 설치, 무료, 오픈소스.">
   <meta property="og:title" content="크로마이핑 — AI 코딩 도구용 사운드 알림">
-  <meta property="og:description" content="AI가 작업 끝날 때마다 핑. 30초 설치, 무료, 오픈소스.">
+  <meta property="og:description" content="AI가 작업 끝날 때마다 핑. 한국 개발자를 위한 사운드 알림.">
   <meta property="og:url" content="https://cromaizing.com/cromaiping">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
   <style>
     :root {
-      --bg: #0a0a0a;
-      --surface: #141414;
-      --border: #2a2a2a;
-      --text: #f5f5f5;
-      --muted: #888;
-      --accent: #4ade80;
-      --accent-dim: #166534;
-      --code-bg: #1a1a1a;
+      --background: #ffffff;
+      --foreground: #0a0a0a;
+      --muted: #f5f5f7;
+      --muted-foreground: #6b7280;
+      --border: #e5e7eb;
+      --brand-violet: #7c3aed;
+      --brand-fuchsia: #d946ef;
+      --brand-coral: #fb7185;
+      --code-bg: #0a0a0a;
+      --code-text: #e5e7eb;
+      --green: #16a34a;
+      --orange: #f59e0b;
+      --red: #dc2626;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: -apple-system, 'Pretendard', 'SF Pro Korean', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: "Pretendard Variable", Pretendard, -apple-system, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: var(--background);
+      color: var(--foreground);
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
     }
-    .container { max-width: 760px; margin: 0 auto; padding: 60px 24px; }
-    .hero { text-align: center; padding: 80px 0 60px; }
-    .hero h1 { font-size: 48px; font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
-    .hero .tagline { color: var(--muted); font-size: 20px; margin-bottom: 32px; }
-    .hero .badge { display: inline-block; background: var(--accent-dim); color: var(--accent); padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; margin-bottom: 16px; }
 
-    .install-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      margin: 32px 0;
-      text-align: left;
+    a { color: inherit; text-decoration: none; }
+
+    /* Brand gradient text */
+    .brand-gradient-text {
+      background: linear-gradient(135deg, var(--brand-violet) 0%, var(--brand-fuchsia) 55%, var(--brand-coral) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
     }
-    .install-box .label { color: var(--muted); font-size: 13px; margin-bottom: 12px; font-weight: 500; }
-    .install-box code {
-      display: block;
+    .brand-gradient-bg {
+      background: linear-gradient(135deg, var(--brand-violet) 0%, var(--brand-fuchsia) 55%, var(--brand-coral) 100%);
+      color: white;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      width: 100%;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 80rem;
+      margin: 0 auto;
+      display: flex;
+      height: 4rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+    }
+    @media (min-width: 640px) { .header-inner { padding: 0 1.5rem; } }
+    @media (min-width: 1024px) { .header-inner { padding: 0 2rem; } }
+
+    .logo { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.25rem; color: #111; letter-spacing: -0.025em; }
+    .logo svg { flex-shrink: 0; }
+
+    .header-nav { display: none; gap: 1.5rem; font-size: 0.875rem; color: #4b5563; font-weight: 500; }
+    @media (min-width: 768px) { .header-nav { display: flex; } }
+    .header-nav a:hover { color: var(--brand-violet); }
+    .header-nav a.active { color: var(--brand-violet); font-weight: 600; }
+
+    .header-cta {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      background: #111;
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: opacity 0.2s;
+    }
+    .header-cta:hover { opacity: 0.85; }
+
+    /* Container */
+    .container {
+      max-width: 56rem;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    @media (min-width: 640px) { .container { padding: 0 1.5rem; } }
+    @media (min-width: 1024px) { .container { padding: 0 2rem; } }
+    .container-wide { max-width: 80rem; margin: 0 auto; padding: 0 1rem; }
+    @media (min-width: 640px) { .container-wide { padding: 0 1.5rem; } }
+    @media (min-width: 1024px) { .container-wide { padding: 0 2rem; } }
+
+    /* Hero */
+    .hero {
+      padding: 5rem 0 4rem;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      margin-bottom: 1rem;
+      padding: 0.25rem 0.75rem;
+      border: 1px solid var(--border);
+      background: rgba(245, 245, 247, 0.6);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted-foreground);
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    @media (min-width: 640px) { .hero h1 { font-size: 3.5rem; } }
+    .hero .tagline {
+      font-size: 1.125rem;
+      color: var(--muted-foreground);
+      max-width: 36rem;
+      margin: 0 auto 2.5rem;
+    }
+    @media (min-width: 640px) { .hero .tagline { font-size: 1.25rem; } }
+
+    /* Install card */
+    .install-card {
+      max-width: 36rem;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: white;
+      box-shadow: 0 4px 24px rgba(124, 58, 237, 0.08), 0 0 0 4px rgba(124, 58, 237, 0.03);
+      overflow: hidden;
+    }
+    .install-card-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .install-card-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .install-card-title { font-weight: 700; font-size: 1rem; }
+    .install-card-subtitle { font-size: 0.8125rem; color: var(--muted-foreground); }
+    .install-card-body { padding: 1.5rem; }
+    .install-cmd {
       background: var(--code-bg);
-      color: var(--accent);
-      padding: 16px 20px;
-      border-radius: 8px;
-      font-family: 'SF Mono', Menlo, monospace;
-      font-size: 14px;
+      color: var(--code-text);
+      padding: 1rem 1.25rem;
+      border-radius: 0.75rem;
+      font-family: 'SF Mono', Menlo, Monaco, monospace;
+      font-size: 0.875rem;
       overflow-x: auto;
       white-space: nowrap;
       cursor: pointer;
       user-select: all;
+      position: relative;
+    }
+    .install-cmd::before {
+      content: '$ ';
+      color: var(--brand-fuchsia);
+      font-weight: 600;
+    }
+    .install-platforms {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .platform-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      background: var(--muted);
+      border-radius: 9999px;
+      font-weight: 500;
     }
 
-    h2 { font-size: 32px; font-weight: 700; margin: 80px 0 24px; letter-spacing: -0.5px; }
-    h3 { font-size: 20px; font-weight: 600; margin: 32px 0 12px; }
-    p { margin-bottom: 16px; color: #e5e5e5; }
-    ul { padding-left: 24px; margin-bottom: 16px; }
-    li { margin-bottom: 8px; color: #d5d5d5; }
-
-    .features { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
-    .feature { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
-    .feature .emoji { font-size: 28px; margin-bottom: 12px; }
-    .feature h3 { margin: 0 0 8px; font-size: 17px; }
-    .feature p { font-size: 14px; color: var(--muted); margin: 0; }
-
-    table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
-    th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); }
-    th { font-weight: 600; color: var(--muted); font-size: 13px; }
-
-    code:not(pre code) {
-      background: var(--code-bg);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: 'SF Mono', Menlo, monospace;
-      font-size: 13px;
-      color: var(--accent);
+    /* Sections */
+    section.content {
+      padding: 4rem 0;
     }
-    pre {
+    @media (min-width: 640px) { section.content { padding: 5rem 0; } }
+
+    section.content.alt {
+      background: var(--muted);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--brand-violet);
+      margin-bottom: 0.5rem;
+    }
+    .section-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+    @media (min-width: 640px) { .section-header h2 { font-size: 2.5rem; } }
+    .section-header p {
+      color: var(--muted-foreground);
+      font-size: 1.0625rem;
+      max-width: 36rem;
+      margin: 0 auto;
+    }
+
+    /* Pain points (이런 적 있나요) */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      max-width: 48rem;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) { .pain-grid { grid-template-columns: 1fr 1fr; gap: 1.25rem; } }
+    .pain-item {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .pain-emoji { font-size: 1.75rem; flex-shrink: 0; }
+    .pain-text { color: #374151; font-size: 0.9375rem; line-height: 1.6; }
+    .pain-text strong { color: #111; font-weight: 700; }
+
+    /* Steps (사용법 섹션) */
+    .steps {
+      max-width: 48rem;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    .step-num {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.75rem;
+      background: linear-gradient(135deg, var(--brand-violet), var(--brand-fuchsia));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.125rem;
+      flex-shrink: 0;
+    }
+    .step-content h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    .step-content > p { color: var(--muted-foreground); margin-bottom: 0.75rem; }
+    .step-cmd {
       background: var(--code-bg);
-      padding: 16px 20px;
-      border-radius: 8px;
+      color: var(--code-text);
+      padding: 0.875rem 1.125rem;
+      border-radius: 0.625rem;
+      font-family: 'SF Mono', Menlo, Monaco, monospace;
+      font-size: 0.8125rem;
       overflow-x: auto;
-      margin: 16px 0;
+      margin: 0.5rem 0;
+      user-select: all;
     }
-    pre code { background: transparent; padding: 0; color: var(--text); font-size: 14px; }
-
-    .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 12px; }
-    .faq-item h3 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
-    .faq-item p { margin: 0; font-size: 14px; }
-
-    footer { border-top: 1px solid var(--border); margin-top: 80px; padding: 40px 0; text-align: center; color: var(--muted); font-size: 14px; }
-    footer a { color: var(--accent); text-decoration: none; }
-
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 36px; }
-      .features { grid-template-columns: 1fr; }
-      .container { padding: 40px 20px; }
+    .step-tip {
+      margin-top: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: rgba(124, 58, 237, 0.05);
+      border-left: 3px solid var(--brand-violet);
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      color: #4b5563;
     }
+    .step-tip strong { color: var(--brand-violet); }
+
+    /* Command table */
+    .cmd-table {
+      max-width: 48rem;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      overflow: hidden;
+      background: white;
+    }
+    .cmd-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    @media (min-width: 640px) { .cmd-row { grid-template-columns: 280px 1fr; gap: 1.5rem; align-items: start; } }
+    .cmd-row:last-child { border-bottom: none; }
+    .cmd-row:hover { background: var(--muted); }
+    .cmd-name {
+      font-family: 'SF Mono', Menlo, Monaco, monospace;
+      font-size: 0.875rem;
+      color: var(--brand-violet);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    @media (min-width: 640px) { .cmd-name { margin-bottom: 0; } }
+    .cmd-desc { color: #4b5563; font-size: 0.9375rem; }
+    .cmd-desc .example {
+      display: block;
+      margin-top: 0.5rem;
+      font-family: 'SF Mono', Menlo, Monaco, monospace;
+      font-size: 0.8125rem;
+      color: var(--muted-foreground);
+      background: var(--muted);
+      padding: 0.375rem 0.625rem;
+      border-radius: 0.375rem;
+    }
+    .cmd-desc .example::before { content: '예: '; color: #9ca3af; }
+
+    /* Slash command demo */
+    .chat-demo {
+      max-width: 36rem;
+      margin: 2rem auto 0;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: white;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    .chat-header {
+      padding: 0.75rem 1rem;
+      background: var(--muted);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .chat-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .chat-body { padding: 1rem; display: flex; flex-direction: column; gap: 0.625rem; }
+    .chat-msg {
+      padding: 0.625rem 0.875rem;
+      border-radius: 0.875rem;
+      font-size: 0.875rem;
+      max-width: 85%;
+    }
+    .chat-msg.user {
+      background: linear-gradient(135deg, var(--brand-violet), var(--brand-fuchsia));
+      color: white;
+      align-self: flex-end;
+      font-family: 'SF Mono', Menlo, monospace;
+      font-size: 0.8125rem;
+    }
+    .chat-msg.bot {
+      background: var(--muted);
+      color: #111;
+      align-self: flex-start;
+    }
+
+    /* Features grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      max-width: 56rem;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) { .features-grid { grid-template-columns: 1fr 1fr; gap: 1.25rem; } }
+    @media (min-width: 1024px) { .features-grid { grid-template-columns: 1fr 1fr 1fr; } }
+    .feature-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--brand-violet);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.1);
+    }
+    .feature-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.625rem;
+      background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(217,70,239,0.1));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+    .feature-card h3 { font-size: 1.0625rem; font-weight: 700; margin-bottom: 0.375rem; }
+    .feature-card p { color: var(--muted-foreground); font-size: 0.875rem; line-height: 1.6; }
+
+    /* Event mapping table */
+    .event-table {
+      max-width: 48rem;
+      margin: 2rem auto 0;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      overflow: hidden;
+      background: white;
+    }
+    .event-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      gap: 1rem;
+    }
+    .event-row:last-child { border-bottom: none; }
+    .event-row.header {
+      background: var(--muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted-foreground);
+      padding: 0.625rem 1.25rem;
+    }
+    .event-trigger { font-size: 0.9375rem; }
+    .event-emoji { display: inline-block; margin-right: 0.5rem; }
+    .event-cat {
+      display: inline-block;
+      font-family: 'SF Mono', Menlo, monospace;
+      font-size: 0.75rem;
+      background: var(--muted);
+      padding: 0.25rem 0.625rem;
+      border-radius: 0.375rem;
+      color: var(--brand-violet);
+      font-weight: 600;
+    }
+
+    /* FAQ */
+    .faq {
+      max-width: 48rem;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    details.faq-item {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 0.875rem;
+      padding: 0;
+      transition: border-color 0.15s;
+    }
+    details.faq-item[open] { border-color: var(--brand-violet); }
+    details.faq-item summary {
+      padding: 1.125rem 1.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    details.faq-item summary::-webkit-details-marker { display: none; }
+    details.faq-item summary::after {
+      content: '+';
+      color: var(--brand-violet);
+      font-size: 1.5rem;
+      font-weight: 400;
+      transition: transform 0.2s;
+    }
+    details.faq-item[open] summary::after { transform: rotate(45deg); }
+    details.faq-item div.faq-body {
+      padding: 0 1.5rem 1.25rem;
+      color: #4b5563;
+      font-size: 0.9375rem;
+      line-height: 1.7;
+    }
+    details.faq-item div.faq-body code {
+      background: var(--muted);
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-size: 0.8125rem;
+      color: var(--brand-violet);
+    }
+
+    /* Roadmap */
+    .roadmap {
+      max-width: 48rem;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .roadmap-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      align-items: start;
+    }
+    .roadmap-version {
+      font-family: 'SF Mono', Menlo, monospace;
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.5rem;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .roadmap-version.done { background: rgba(22, 163, 74, 0.1); color: var(--green); }
+    .roadmap-version.next { background: rgba(245, 158, 11, 0.1); color: var(--orange); }
+    .roadmap-version.future { background: var(--muted); color: var(--muted-foreground); }
+    .roadmap-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.375rem; }
+    .roadmap-content p { color: var(--muted-foreground); font-size: 0.875rem; }
+
+    /* CTA bottom */
+    .cta-section {
+      padding: 5rem 0;
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 1rem;
+    }
+    @media (min-width: 640px) { .cta-section h2 { font-size: 2.5rem; } }
+    .cta-section p { color: var(--muted-foreground); margin-bottom: 2rem; font-size: 1.0625rem; }
+    .cta-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.5rem;
+      border-radius: 0.625rem;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary { background: #111; color: white; }
+    .btn-secondary { background: var(--muted); color: #111; border: 1px solid var(--border); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 0 2rem;
+      background: white;
+    }
+    .footer-inner {
+      max-width: 80rem;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    @media (min-width: 768px) { .footer-inner { grid-template-columns: 2fr 1fr 1fr; padding: 0 2rem; } }
+    .footer-brand p { color: var(--muted-foreground); font-size: 0.875rem; margin-top: 0.75rem; max-width: 28rem; }
+    .footer-col h4 { font-size: 0.8125rem; font-weight: 700; margin-bottom: 0.875rem; color: #111; text-transform: uppercase; letter-spacing: 0.05em; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .footer-col a { color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--brand-violet); }
+    .footer-bottom {
+      max-width: 80rem;
+      margin: 2rem auto 0;
+      padding: 1.5rem 1rem 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      line-height: 1.7;
+    }
+    @media (min-width: 768px) { .footer-bottom { padding: 1.5rem 2rem 0; } }
+
+    /* Utility */
+    .copy-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #111;
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: transform 0.3s ease-out;
+      z-index: 100;
+    }
+    .copy-toast.show { transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
 
-<div class="container">
+<!-- ─────────────────────────────────────────── -->
+<!-- HEADER -->
+<!-- ─────────────────────────────────────────── -->
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo" aria-label="크로마이징 홈">
+      <svg width="36" height="36" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <circle cx="20" cy="20" r="15" fill="#fff" stroke="#111" stroke-width="3.5"/>
+        <path d="M 28 13 A 9 9 0 1 0 28 27" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="29" cy="20" r="3" fill="#c084fc" stroke="#111" stroke-width="2"/>
+      </svg>
+      <span>cromaizing</span>
+    </a>
+    <nav class="header-nav">
+      <a href="/blog">블로그</a>
+      <a href="/community">커뮤니티</a>
+      <a href="/skills">AI 툴즈 다운로드</a>
+      <a href="/cromaiping" class="active">크로마이핑</a>
+    </nav>
+    <a href="https://github.com/cromaizing/cromaiping" class="header-cta" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      <span>GitHub</span>
+    </a>
+  </div>
+</header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="badge">v0.1.0 · OPEN SOURCE · MIT</div>
-    <h1>크로마이핑 🔔</h1>
-    <p class="tagline">AI가 작업 끝날 때마다 핑.<br>한국 개발자를 위한 사운드 알림.</p>
+<!-- ─────────────────────────────────────────── -->
+<!-- HERO -->
+<!-- ─────────────────────────────────────────── -->
+<main>
+<section class="hero container-wide">
+  <div class="hero-badge">
+    <span style="color: var(--brand-violet); margin-right: 0.375rem;">●</span>
+    v0.1.0 · Open Source · MIT
+  </div>
+  <h1>
+    <span class="brand-gradient-text">크로마이핑</span>
+  </h1>
+  <p class="tagline">
+    AI가 작업 끝낼 때마다 핑.<br>
+    Claude Code, Cursor, Codex가 일을 마치면 <strong style="color: #111;">사운드와 알림</strong>으로 알려드려요.
+  </p>
 
-    <div class="install-box">
-      <div class="label">▾ 30초 설치 (macOS / Linux / WSL2)</div>
-      <code>curl -fsSL https://cromaizing.com/cromaiping/install.sh | bash</code>
+  <div class="install-card">
+    <div class="install-card-header">
+      <div class="install-card-icon brand-gradient-bg">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+      </div>
+      <div>
+        <div class="install-card-title">30초 설치</div>
+        <div class="install-card-subtitle">터미널에 한 줄만 복사하세요</div>
+      </div>
     </div>
-  </section>
-
-  <!-- WHY -->
-  <h2>이런 적 있으신가요?</h2>
-  <ul>
-    <li>AI한테 작업 시키고 다른 일 하다가 <strong>20분 만에 돌아왔는데 5분 전에 끝나있던 적</strong></li>
-    <li>권한 승인 기다리는데 모니터 안 보고 있어서 <strong>계속 멈춰있던 것을 몰랐던 적</strong></li>
-    <li>AI가 에러 토했는데 <strong>모르고 다른 거 시키던 적</strong></li>
-    <li>회의 중인데 동료가 <strong>"AI 응답 왔어?" 물어볼 때마다 화면 봐야 했던 적</strong></li>
-  </ul>
-  <p>크로마이핑이 해결합니다. <strong>설치하면 바로 작동</strong>, 설정 필요 없음.</p>
-
-  <!-- FEATURES -->
-  <h2>주요 기능</h2>
-  <div class="features">
-    <div class="feature">
-      <div class="emoji">🔔</div>
-      <h3>7가지 이벤트 인식</h3>
-      <p>세션 시작, 작업 완료, 오류, 권한 대기, 컨텍스트 한계, 빠른 입력 자동 감지</p>
-    </div>
-    <div class="feature">
-      <div class="emoji">🎵</div>
-      <h3>CESP v1.0 호환</h3>
-      <p>325+ 외부 사운드팩 그대로 사용. 본인 만든 팩도 다른 도구와 호환.</p>
-    </div>
-    <div class="feature">
-      <div class="emoji">💬</div>
-      <h3>한국어 슬래시 명령어</h3>
-      <p>채팅에서 <code>/크로마이핑-상태</code> 같은 한국어 명령 바로 작동</p>
-    </div>
-    <div class="feature">
-      <div class="emoji">🔐</div>
-      <h3>완전 로컬</h3>
-      <p>클라우드 전송 0, 텔레메트리 0. ~/.claude/ 안에서만 동작.</p>
-    </div>
-    <div class="feature">
-      <div class="emoji">⚡</div>
-      <h3>경량</h3>
-      <p>약 1200줄 bash + Python. 외부 의존성 최소.</p>
-    </div>
-    <div class="feature">
-      <div class="emoji">🎯</div>
-      <h3>경로별 다른 팩</h3>
-      <p>회사 프로젝트는 차분한 팩, 개인 프로젝트는 재밌는 팩으로 자동 전환</p>
+    <div class="install-card-body">
+      <div class="install-cmd" id="installCmd" onclick="copyCmd()">curl -fsSL https://cromaizing.com/cromaiping/install.sh | bash</div>
+      <div class="install-platforms">
+        <span>지원:</span>
+        <span class="platform-pill">🍎 macOS</span>
+        <span class="platform-pill">🐧 Linux</span>
+        <span class="platform-pill">🪟 WSL2</span>
+        <span style="color:#9ca3af; margin-left:auto;">Windows 네이티브 v0.3 예정</span>
+      </div>
     </div>
   </div>
+</section>
 
-  <!-- COMMANDS -->
-  <h2>주요 명령어</h2>
-  <p>설치 후 어디서든 사용 가능:</p>
-  <pre><code>cromaiping status              # 현재 상태
-cromaiping toggle              # 음소거 토글
-cromaiping volume 70           # 볼륨 변경
-cromaiping list                # 설치된 팩 목록
-cromaiping preview             # 사운드 미리듣기
-cromaiping use &lt;팩이름&gt;        # 팩 변경</code></pre>
-
-  <p>Claude Code 채팅에서 슬래시 명령어로:</p>
-  <pre><code>/cromaiping-status             현재 상태
-/cromaiping-toggle             음소거 토글
-/cromaiping-volume 70          볼륨 변경
-/cromaiping-use &lt;팩&gt;           팩 변경
-/크로마이핑-상태               한국어도 OK</code></pre>
-
-  <!-- FAQ -->
-  <h2>자주 묻는 질문</h2>
-
-  <div class="faq-item">
-    <h3>peon-ping과 뭐가 달라요?</h3>
-    <p>peon-ping의 한국 시장 특화 버전입니다. 같은 CESP 표준을 쓰기 때문에 외부 사운드팩은 호환됩니다. 차이는 한국어 UI/문서, 한국 특화 기능 (카카오톡 알림, 한국어 TTS — v1.0 예정), cromaizing.com 생태계 통합입니다.</p>
+<!-- ─────────────────────────────────────────── -->
+<!-- WHY (이런 적 있나요) -->
+<!-- ─────────────────────────────────────────── -->
+<section class="content alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Why Cromaiping</div>
+      <h2>이런 적 한 번쯤 있죠?</h2>
+      <p>AI 코딩 도구는 좋은데, 작업 끝났는지 매번 확인하기 귀찮으시죠.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-item">
+        <span class="pain-emoji">⏰</span>
+        <p class="pain-text">AI한테 작업 시키고 다른 일 하다가 <strong>20분 만에 돌아왔는데, 알고 보니 5분 전에 끝나있던 적</strong></p>
+      </div>
+      <div class="pain-item">
+        <span class="pain-emoji">🚫</span>
+        <p class="pain-text">권한 승인 기다리는데 모니터 안 보고 있어서 <strong>계속 멈춰있던 것을 모르고 지나간 적</strong></p>
+      </div>
+      <div class="pain-item">
+        <span class="pain-emoji">😱</span>
+        <p class="pain-text">AI가 에러 토했는데 <strong>모르고 다음 작업 계속 시키던 적</strong></p>
+      </div>
+      <div class="pain-item">
+        <span class="pain-emoji">👀</span>
+        <p class="pain-text">회의 중인데 동료가 <strong>"AI 응답 왔어?" 물어볼 때마다 화면 봐야 했던 적</strong></p>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div class="faq-item">
-    <h3>둘 다 깔아도 돼요?</h3>
-    <p>됩니다. 같은 이벤트에 둘 다 반응하니 사운드가 2번 울려요. 한쪽 음소거 추천: <code>peon pause</code> 또는 <code>cromaiping pause</code></p>
+<!-- ─────────────────────────────────────────── -->
+<!-- 사용법 (Step by Step) -->
+<!-- ─────────────────────────────────────────── -->
+<section class="content">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">시작하기</div>
+      <h2>3단계로 끝나는 설치</h2>
+      <p>복사 → 붙여넣기 → 끝. 추가 설정 없이 바로 작동합니다.</p>
+    </div>
+    <div class="steps">
+
+      <!-- Step 1 -->
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>터미널을 열어주세요</h3>
+          <p>맥은 <strong>⌘ + Space</strong> 누르고 "터미널" 검색. 또는 iTerm, Warp, VS Code 터미널 등 아무거나 OK.</p>
+          <div class="step-tip">
+            <strong>💡 처음이세요?</strong> 터미널은 그냥 글자로 명령을 내리는 검은 창이에요. 무서운 거 아닙니다.
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>아래 한 줄을 복사해서 붙여넣고 엔터</h3>
+          <p>다운로드, 설치, Claude Code 훅 등록까지 다 자동으로 해줘요.</p>
+          <div class="step-cmd">curl -fsSL https://cromaizing.com/cromaiping/install.sh | bash</div>
+          <div class="step-tip">
+            <strong>💡 뭐가 일어나는지 알고 싶다면?</strong> <code style="background: var(--muted); padding: 1px 5px; border-radius: 3px; font-size: 12px;">curl -fsSL https://cromaizing.com/cromaiping/install.sh -o install.sh</code> 로 파일만 받아서 내용 먼저 보실 수 있어요.
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Claude Code를 재시작하세요</h3>
+          <p>설치 시 <code style="background: var(--muted); padding: 1px 5px; border-radius: 3px; font-size: 13px;">~/.claude/settings.json</code> 에 훅이 자동 등록됩니다. 재시작하면 새 설정이 적용돼요.</p>
+          <div class="step-tip">
+            <strong>✅ 끝!</strong> 이제 Claude Code가 작업 끝내면 사운드가 울립니다. <code style="background: var(--muted); padding: 1px 5px; border-radius: 3px; font-size: 13px;">cromaiping preview</code> 로 미리 들어보실 수 있어요.
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
+</section>
 
-  <div class="faq-item">
-    <h3>사운드를 직접 만들어도 되나요?</h3>
-    <p>네! CESP v1.0 표준대로 <code>openpeon.json</code> + <code>sounds/</code> 폴더만 있으면 됩니다.</p>
+<!-- ─────────────────────────────────────────── -->
+<!-- 명령어 가이드 (CLI) -->
+<!-- ─────────────────────────────────────────── -->
+<section class="content alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">CLI 명령어</div>
+      <h2>터미널에서 사용하기</h2>
+      <p>설치 후 어디서든 <code style="background: var(--muted); padding: 2px 6px; border-radius: 4px; font-size: 0.875em; color: var(--brand-violet);">cromaiping</code> 명령으로 제어할 수 있어요.</p>
+    </div>
+
+    <div class="cmd-table">
+      <div class="cmd-row">
+        <div class="cmd-name">cromaiping status</div>
+        <div class="cmd-desc">
+          현재 상태 확인 (활성/음소거, 기본 팩, 볼륨, 알림 설정)
+          <span class="example">cromaiping status</span>
+        </div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">cromaiping toggle</div>
+        <div class="cmd-desc">
+          음소거 ↔ 활성 토글. 회의나 통화 중에 빠르게 끄기 좋아요.
+          <span class="example">cromaiping toggle</span>
+        </div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">cromaiping volume &lt;0-100&gt;</div>
+        <div class="cmd-desc">
+          볼륨 변경. 0은 무음, 100은 최대. 인자 없으면 현재 볼륨 표시.
+          <span class="example">cromaiping volume 70</span>
+        </div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">cromaiping list</div>
+        <div class="cmd-desc">
+          설치된 사운드 팩 목록 보기.
+          <span class="example">cromaiping list</span>
+        </div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">cromaiping use &lt;팩이름&gt;</div>
+        <div class="cmd-desc">
+          기본 팩 변경. 모든 새 세션에 적용돼요.
+          <span class="example">cromaiping use cromaiping_default</span>
+        </div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">cromaiping preview [카테고리]</div>
+        <div class="cmd-desc">
+          사운드 미리듣기. 카테고리 안 적으면 session.start 재생.
+          <span class="example">cromaiping preview task.complete</span>
+        </div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">cromaiping help</div>
+        <div class="cmd-desc">
+          전체 명령어 목록 보기.
+          <span class="example">cromaiping help</span>
+        </div>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div class="faq-item">
-    <h3>회사에서 써도 되나요?</h3>
-    <p>MIT 라이선스라 상업적 사용 가능합니다. 단, 사용하시는 사운드팩의 라이선스(CC-BY-NC-4.0 등)는 별도로 확인하세요.</p>
+<!-- ─────────────────────────────────────────── -->
+<!-- 슬래시 명령어 (Claude Code 채팅에서) -->
+<!-- ─────────────────────────────────────────── -->
+<section class="content">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Slash Commands</div>
+      <h2>Claude Code 채팅에서 직접</h2>
+      <p>터미널 갈 필요 없이 채팅창에 바로 명령어를 입력하세요. <strong style="color:#111">한국어도 됩니다.</strong></p>
+    </div>
+
+    <div class="chat-demo">
+      <div class="chat-header">
+        <span class="chat-dot" style="background: #ef4444;"></span>
+        <span class="chat-dot" style="background: #f59e0b;"></span>
+        <span class="chat-dot" style="background: #10b981;"></span>
+        <span style="margin-left: 0.5rem;">Claude Code</span>
+      </div>
+      <div class="chat-body">
+        <div class="chat-msg user">/cromaiping-status</div>
+        <div class="chat-msg bot">📊 상태: 활성 / 기본 팩: cromaiping_default / 볼륨: 80% / 알림: 켜짐</div>
+        <div class="chat-msg user">/cromaiping-volume 50</div>
+        <div class="chat-msg bot">🔊 볼륨이 50%로 설정되었습니다.</div>
+        <div class="chat-msg user">/크로마이핑-음소거</div>
+        <div class="chat-msg bot">🔇 크로마이핑 음소거됨</div>
+      </div>
+    </div>
+
+    <div class="cmd-table" style="margin-top: 2.5rem;">
+      <div class="cmd-row">
+        <div class="cmd-name">/cromaiping-status</div>
+        <div class="cmd-desc">현재 상태를 채팅에 바로 표시</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/cromaiping-toggle</div>
+        <div class="cmd-desc">음소거 토글</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/cromaiping-volume &lt;0-100&gt;</div>
+        <div class="cmd-desc">볼륨 변경</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/cromaiping-use &lt;팩&gt;</div>
+        <div class="cmd-desc">이번 세션에서만 팩 임시 변경</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/cromaiping-list</div>
+        <div class="cmd-desc">설치된 팩 목록</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/cromaiping-help</div>
+        <div class="cmd-desc">슬래시 명령어 도움말</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-name">/크로마이핑-상태</div>
+        <div class="cmd-desc">한국어 별칭도 모두 동작합니다 (상태/음소거/팩/볼륨/도움말)</div>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div class="faq-item">
-    <h3>회의 중에 사운드 안 울리게 할 수 있나요?</h3>
-    <p>v0.2부터 자동 회의 감지 (마이크 사용 중 감지) 추가 예정입니다. 지금은 <code>cromaiping pause</code>로 수동 토글.</p>
+<!-- ─────────────────────────────────────────── -->
+<!-- 어떤 이벤트에 사운드가 울리나요 -->
+<!-- ─────────────────────────────────────────── -->
+<section class="content alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Events</div>
+      <h2>어떤 상황에 어떤 사운드?</h2>
+      <p>크로마이핑은 7가지 상황을 자동으로 인식합니다.</p>
+    </div>
+
+    <div class="event-table">
+      <div class="event-row header">
+        <div>상황</div>
+        <div>카테고리</div>
+      </div>
+      <div class="event-row">
+        <div class="event-trigger"><span class="event-emoji">🎬</span>세션 시작 / Claude Code 실행</div>
+        <div><span class="event-cat">session.start</span></div>
+      </div>
+      <div class="event-row">
+        <div class="event-trigger"><span class="event-emoji">✅</span>작업 완료 (Stop 이벤트)</div>
+        <div><span class="event-cat">task.complete</span></div>
+      </div>
+      <div class="event-row">
+        <div class="event-trigger"><span class="event-emoji">🛑</span>오류 발생 (Bash 실패 등)</div>
+        <div><span class="event-cat">task.error</span></div>
+      </div>
+      <div class="event-row">
+        <div class="event-trigger"><span class="event-emoji">🔐</span>권한 승인 대기</div>
+        <div><span class="event-cat">input.required</span></div>
+      </div>
+      <div class="event-row">
+        <div class="event-trigger"><span class="event-emoji">⚠️</span>컨텍스트 한계 (PreCompact)</div>
+        <div><span class="event-cat">resource.limit</span></div>
+      </div>
+      <div class="event-row">
+        <div class="event-trigger"><span class="event-emoji">🤬</span>너무 빠른 입력 (10초 내 3+회)</div>
+        <div><span class="event-cat">user.spam</span></div>
+      </div>
+      <div class="event-row">
+        <div class="event-trigger"><span class="event-emoji">👋</span>작업 수락 (옵션, 기본 OFF)</div>
+        <div><span class="event-cat">task.acknowledge</span></div>
+      </div>
+    </div>
+
+    <div style="max-width: 36rem; margin: 1.5rem auto 0; text-align: center; font-size: 0.875rem; color: var(--muted-foreground);">
+      💡 각 카테고리는 <code style="background: white; padding: 2px 6px; border-radius: 4px; color: var(--brand-violet);">~/.claude/hooks/cromaiping/config.json</code> 에서 끌 수 있습니다.
+    </div>
   </div>
+</section>
 
-  <!-- ROADMAP -->
-  <h2>로드맵</h2>
-  <table>
-    <tr><th>버전</th><th>주요 기능</th></tr>
-    <tr><td><strong>v0.1</strong> ✅</td><td>Claude Code 통합, CLI, 슬래시 명령어, CESP 호환</td></tr>
-    <tr><td>v0.2</td><td>외부 팩 다운로더, 오버레이 알림, 회의 자동 감지, 첫 한국 팩</td></tr>
-    <tr><td>v0.3</td><td>Cursor/Codex/Gemini CLI 어댑터, Homebrew tap, Windows 지원</td></tr>
-    <tr><td>v1.0</td><td>카카오톡 알림, 네이버 클로바 TTS, cromaizing.com 통합, MCP 서버</td></tr>
-  </table>
+<!-- ─────────────────────────────────────────── -->
+<!-- 주요 기능 -->
+<!-- ─────────────────────────────────────────── -->
+<section class="content">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Features</div>
+      <h2>핵심 기능</h2>
+      <p>겉보기엔 단순하지만, 안엔 꽤 많은 게 들어있어요.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎵</div>
+        <h3>CESP v1.0 호환</h3>
+        <p>전 세계 325+ 사운드팩 그대로 사용 가능. 본인이 만든 팩도 다른 도구와 호환됩니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>한국어 슬래시 명령어</h3>
+        <p>채팅창에 <code style="font-size: 0.8em;">/크로마이핑-상태</code> 처럼 한글로 입력해도 동작.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h3>완전 로컬 동작</h3>
+        <p>클라우드 전송 0, 텔레메트리 0. ~/.claude/ 안에서만 동작합니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📁</div>
+        <h3>경로별 다른 팩</h3>
+        <p>회사 프로젝트는 차분한 팩, 개인 프로젝트는 재밌는 팩으로 자동 전환.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>경량 (1200줄 ↓)</h3>
+        <p>bash + Python. 외부 의존성 최소. 시스템에 부담 0.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔌</div>
+        <h3>다중 IDE 지원</h3>
+        <p>Claude Code 우선, Cursor / Codex / Gemini CLI / Windsurf 어댑터 v0.3 예정.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- LINKS -->
-  <h2>링크</h2>
-  <ul>
-    <li><strong>GitHub</strong>: <a href="https://github.com/cromaizing/cromaiping" style="color: var(--accent);">github.com/cromaizing/cromaiping</a></li>
-    <li><strong>다운로드</strong>: <a href="/cromaiping/cromaiping-latest.tar.gz" style="color: var(--accent);">cromaiping-latest.tar.gz</a></li>
-    <li><strong>커뮤니티</strong>: <a href="/community" style="color: var(--accent);">cromaizing.com/community</a></li>
-    <li><strong>CESP 표준</strong>: <a href="https://openpeon.com/spec" style="color: var(--accent);">openpeon.com/spec</a></li>
-  </ul>
+<!-- ─────────────────────────────────────────── -->
+<!-- FAQ -->
+<!-- ─────────────────────────────────────────── -->
+<section class="content alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">FAQ</div>
+      <h2>자주 묻는 질문</h2>
+    </div>
+    <div class="faq">
 
-</div>
+      <details class="faq-item">
+        <summary>peon-ping과 뭐가 달라요?</summary>
+        <div class="faq-body">
+          <p>peon-ping의 한국 시장 특화 버전이라고 보시면 됩니다. 같은 <strong>CESP 표준</strong>을 쓰기 때문에 외부 사운드팩은 호환됩니다.</p>
+          <p style="margin-top: 0.75rem;">차이점:</p>
+          <ul style="margin-top: 0.5rem; padding-left: 1.25rem;">
+            <li>한국어 UI · 문서 · 슬래시 명령어 (<code>/크로마이핑-상태</code> 등)</li>
+            <li>한국 개발자 환경 기준 트러블슈팅 가이드</li>
+            <li>v1.0에 카카오톡 알림, 한국어 TTS, cromaizing.com 통합 예정</li>
+          </ul>
+        </div>
+      </details>
 
+      <details class="faq-item">
+        <summary>peon-ping 이미 쓰는데 둘 다 깔아도 돼요?</summary>
+        <div class="faq-body">
+          <p>됩니다. 둘 다 같은 이벤트에 반응하니 사운드가 두 번 울려요. 한쪽 음소거하시는 게 깔끔합니다:</p>
+          <p style="margin-top: 0.5rem;"><code>peon pause</code> 또는 <code>cromaiping pause</code></p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>회의 중에 사운드 안 울리게 할 수 있나요?</summary>
+        <div class="faq-body">
+          <p>지금은 <code>cromaiping pause</code> / <code>cromaiping resume</code>으로 수동 토글하셔야 해요.</p>
+          <p style="margin-top: 0.5rem;"><strong>v0.2부터 자동 회의 감지</strong>가 추가됩니다 (마이크 사용 중일 때 자동 음소거). 또는 채팅에서 <code>/크로마이핑-음소거</code> 한 번 치면 바로 꺼집니다.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>사운드를 직접 만들어도 되나요?</summary>
+        <div class="faq-body">
+          <p>네! CESP v1.0 표준대로 <code>openpeon.json</code> 매니페스트와 <code>sounds/</code> 폴더만 있으면 됩니다.</p>
+          <p style="margin-top: 0.5rem;">만든 팩은 <code>~/.claude/hooks/cromaiping/packs/&lt;팩이름&gt;/</code> 에 넣으면 자동 인식. <a href="https://openpeon.com/create" target="_blank" rel="noopener" style="color: var(--brand-violet);">CESP 팩 만들기 가이드 →</a></p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>회사에서 써도 되나요? 라이선스가 어떻게 되나요?</summary>
+        <div class="faq-body">
+          <p>크로마이핑 본체는 <strong>MIT 라이선스</strong>라 상업적 사용 자유롭습니다.</p>
+          <p style="margin-top: 0.5rem;">단, 사용하는 <strong>사운드팩</strong>은 별도 라이선스를 가질 수 있어요 (CC-BY-NC-4.0 등). 외부 팩 다운로드 시 각 팩의 LICENSE를 확인해주세요.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>제거하려면 어떻게 하나요?</summary>
+        <div class="faq-body">
+          <p>설치된 디렉토리에서 uninstall.sh를 실행하시면 됩니다:</p>
+          <p style="margin-top: 0.5rem;"><code>bash ~/.claude/hooks/cromaiping/uninstall.sh</code></p>
+          <p style="margin-top: 0.5rem;">훅 등록도 같이 해제되고, 다운로드한 사운드팩은 백업할지 물어봐요.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Linux나 Windows에서도 동작해요?</summary>
+        <div class="faq-body">
+          <p><strong>macOS</strong>: v0.1부터 완전 지원 ✅<br>
+          <strong>Linux</strong>: v0.1부터 기본 지원 (PipeWire/PulseAudio/ffplay 자동 감지) ✅<br>
+          <strong>WSL2</strong>: v0.1부터 PowerShell MediaPlayer로 동작 ✅<br>
+          <strong>Windows 네이티브</strong>: v0.3 예정 🚧</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>인터넷 없는 환경에서도 동작하나요?</summary>
+        <div class="faq-body">
+          <p>네. 설치 후엔 완전 오프라인 동작합니다. 사운드 재생, 알림, 슬래시 명령어 전부 로컬에서만 돌아가요. 외부 서버 호출 0회입니다.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- 로드맵 -->
+<!-- ─────────────────────────────────────────── -->
+<section class="content">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Roadmap</div>
+      <h2>앞으로의 계획</h2>
+      <p>오픈소스로 천천히 안정적으로 만들어 갑니다.</p>
+    </div>
+    <div class="roadmap">
+      <div class="roadmap-item">
+        <span class="roadmap-version done">v0.1 ✓</span>
+        <div class="roadmap-content">
+          <h3>MVP 출시 (현재)</h3>
+          <p>Claude Code 통합, CLI, 한국어 슬래시 명령어, CESP 호환 매니페스트, 8개 이벤트 훅</p>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <span class="roadmap-version next">v0.2</span>
+        <div class="roadmap-content">
+          <h3>안정화 + 자체 팩</h3>
+          <p>외부 팩 자동 다운로더 · 데스크톱 오버레이 알림 (macOS) · 회의 자동 감지 · 첫 자체 한국 사운드 팩</p>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <span class="roadmap-version future">v0.3</span>
+        <div class="roadmap-content">
+          <h3>다중 IDE</h3>
+          <p>Cursor / Codex / Gemini CLI / Windsurf 어댑터 · Homebrew tap 등록 · Windows 네이티브 지원</p>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <span class="roadmap-version future">v1.0</span>
+        <div class="roadmap-content">
+          <h3>한국 특화 통합</h3>
+          <p>카카오톡 푸시 알림 · 네이버 클로바 한국어 TTS · cromaizing.com 통합 (계정 연동, 팩 마켓플레이스) · MCP 서버</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CTA -->
+<!-- ─────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="container">
+    <h2>지금 바로 시작하세요</h2>
+    <p>30초면 끝납니다. 마음에 안 들면 한 줄로 제거 가능해요.</p>
+    <div class="cta-buttons">
+      <a href="#" onclick="copyCmd();return false;" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        설치 명령어 복사
+      </a>
+      <a href="https://github.com/cromaizing/cromaiping" class="btn btn-secondary" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        GitHub에서 보기
+      </a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- FOOTER -->
+<!-- ─────────────────────────────────────────── -->
 <footer>
-  <p><strong>크로마이핑</strong> · MIT License · Made with 🎵 by 우수에프앤씨</p>
-  <p style="margin-top: 8px;"><a href="/">cromaizing.com</a> · <a href="mailto:woosu9859@gmail.com">문의</a></p>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="logo">
+        <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="15" fill="#fff" stroke="#111" stroke-width="3.5"/>
+          <path d="M 28 13 A 9 9 0 1 0 28 27" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="29" cy="20" r="3" fill="#c084fc" stroke="#111" stroke-width="2"/>
+        </svg>
+        <span>cromaizing</span>
+      </a>
+      <p>국내 최대 AI 커뮤니티. 크로마이저들이 만드는 AI 자동화 스킬을 공유하고 거래하세요.</p>
+    </div>
+    <div class="footer-col">
+      <h4>크로마이핑</h4>
+      <ul>
+        <li><a href="https://github.com/cromaizing/cromaiping">GitHub</a></li>
+        <li><a href="/cromaiping/cromaiping-latest.tar.gz">다운로드</a></li>
+        <li><a href="https://openpeon.com/spec" target="_blank" rel="noopener">CESP 표준</a></li>
+        <li><a href="mailto:woosu9859@gmail.com">문의하기</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>회사</h4>
+      <ul>
+        <li><a href="/about">회사소개</a></li>
+        <li><a href="/terms">이용약관</a></li>
+        <li><a href="/privacy">개인정보 처리방침</a></li>
+        <li><a href="/support">고객센터</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    우수에프앤씨 주식회사 · 대표: 김민석 · 사업자등록번호: 424-88-03268 · 통신판매업 신고번호: 2024-충남천안-2703<br>
+    개인정보 보호 책임자: woosu9859@gmail.com · 고객문의: woosu9859@gmail.com<br>
+    © 2026 우수에프앤씨 주식회사. All rights reserved.
+  </div>
 </footer>
+
+<!-- Toast for copy -->
+<div class="copy-toast" id="copyToast">✓ 클립보드에 복사되었습니다</div>
+
+<script>
+function copyCmd() {
+  const cmd = document.getElementById('installCmd').textContent;
+  navigator.clipboard.writeText(cmd).then(() => {
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  });
+}
+</script>
 
 </body>
 </html>
