@@ -73,28 +73,52 @@ info "설정 파일: $SETTINGS_FILE"
 mkdir -p "$INSTALL_DIR"/{scripts,adapters,packs,logs}
 
 # ─────────────────────────────────────────────
-# 파일 복사 또는 다운로드
+# 파일 복사 또는 원격 다운로드
 # ─────────────────────────────────────────────
-SCRIPT_SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TARBALL_URL="${CROMAIPING_TARBALL_URL:-https://cromaizing.com/cromaiping/cromaiping-latest.tar.gz}"
 
-if [ -f "$SCRIPT_SRC/cromaiping.sh" ]; then
+# curl | bash 로 실행되면 BASH_SOURCE가 비어있거나 /dev/fd/...
+SCRIPT_SRC=""
+if [ -n "${BASH_SOURCE[0]:-}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
+  SCRIPT_SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
+
+if [ -n "$SCRIPT_SRC" ] && [ -f "$SCRIPT_SRC/cromaiping.sh" ]; then
+  # 로컬 소스에서 설치
   info "로컬 소스에서 설치 중..."
-  cp -r "$SCRIPT_SRC/cromaiping.sh" "$INSTALL_DIR/"
-  cp -r "$SCRIPT_SRC/VERSION" "$INSTALL_DIR/"
-  cp -r "$SCRIPT_SRC/scripts/." "$INSTALL_DIR/scripts/"
-  [ -d "$SCRIPT_SRC/adapters" ] && cp -r "$SCRIPT_SRC/adapters/." "$INSTALL_DIR/adapters/" 2>/dev/null || true
-  [ -d "$SCRIPT_SRC/packs" ] && cp -r "$SCRIPT_SRC/packs/." "$INSTALL_DIR/packs/" 2>/dev/null || true
-
-  # config.json은 기존 파일이 있으면 보존
-  if [ ! -f "$INSTALL_DIR/config.json" ]; then
-    cp "$SCRIPT_SRC/config.json" "$INSTALL_DIR/config.json"
-  else
-    warn "기존 config.json 보존됨"
-  fi
+  SOURCE_DIR="$SCRIPT_SRC"
 else
-  info "원격 다운로드 중... (개발 중인 기능)"
-  err "현재 버전은 로컬 설치만 지원합니다. 'git clone' 후 './install.sh' 실행해주세요."
-  exit 1
+  # 원격 다운로드 (curl | bash 시나리오)
+  info "원격 소스 다운로드 중..."
+  TMP_DIR="$(mktemp -d)"
+  trap 'rm -rf "$TMP_DIR"' EXIT
+  TARBALL="$TMP_DIR/cromaiping.tar.gz"
+  if ! curl -fsSL "$TARBALL_URL" -o "$TARBALL"; then
+    err "다운로드 실패: $TARBALL_URL"
+    err "수동 설치: git clone https://github.com/cromaizing/cromaiping && cd cromaiping && bash install.sh"
+    exit 1
+  fi
+  tar -xzf "$TARBALL" -C "$TMP_DIR"
+  SOURCE_DIR="$(find "$TMP_DIR" -maxdepth 2 -name 'cromaiping.sh' -exec dirname {} \; | head -1)"
+  if [ -z "$SOURCE_DIR" ] || [ ! -f "$SOURCE_DIR/cromaiping.sh" ]; then
+    err "tarball 구조가 올바르지 않습니다."
+    exit 1
+  fi
+  ok "다운로드 완료"
+fi
+
+# 파일 복사
+cp -f "$SOURCE_DIR/cromaiping.sh" "$INSTALL_DIR/"
+cp -f "$SOURCE_DIR/VERSION" "$INSTALL_DIR/"
+cp -rf "$SOURCE_DIR/scripts/." "$INSTALL_DIR/scripts/"
+[ -d "$SOURCE_DIR/adapters" ] && cp -rf "$SOURCE_DIR/adapters/." "$INSTALL_DIR/adapters/" 2>/dev/null || true
+[ -d "$SOURCE_DIR/packs" ] && cp -rf "$SOURCE_DIR/packs/." "$INSTALL_DIR/packs/" 2>/dev/null || true
+
+# config.json은 기존 파일이 있으면 보존
+if [ ! -f "$INSTALL_DIR/config.json" ]; then
+  cp "$SOURCE_DIR/config.json" "$INSTALL_DIR/config.json"
+else
+  warn "기존 config.json 보존됨"
 fi
 
 chmod +x "$INSTALL_DIR/cromaiping.sh"

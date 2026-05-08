@@ -20,19 +20,19 @@ Claude Code, Cursor, Codex 등 AI 코딩 도구가 작업을 완료하거나 입
 
 ## 🚀 설치
 
-### 로컬 설치 (개발 중)
+### 30초 설치 (권장)
+```bash
+curl -fsSL https://cromaizing.com/cromaiping/install.sh | bash
+```
+
+### 로컬 설치 (개발자용)
 ```bash
 git clone https://github.com/cromaizing/cromaiping
 cd cromaiping
 bash install.sh
 ```
 
-### 원격 설치 (예정)
-```bash
-curl -fsSL https://cromaizing.com/cromaiping/install.sh | bash
-```
-
-설치하면 `~/.claude/hooks/cromaiping/`에 파일이 들어가고, `~/.claude/settings.json`에 훅이 자동 등록됩니다.
+설치하면 `~/.claude/hooks/cromaiping/`에 파일이 들어가고, `~/.claude/settings.json`에 훅이 자동 등록됩니다. Claude Code 재시작하면 바로 동작합니다.
 
 ---
 
@@ -126,17 +126,24 @@ my-pack/
 ```
 cromaiping/
 ├── VERSION
-├── cromaiping.sh         # 메인 훅 핸들러 + CLI
-├── config.json           # 기본 설정
-├── install.sh            # 인스톨러
-├── uninstall.sh          # 제거 스크립트
+├── cromaiping.sh             # 메인 훅 핸들러 + CLI
+├── config.json               # 기본 설정
+├── install.sh                # 인스톨러 (로컬 + 원격 자동 감지)
+├── uninstall.sh              # 제거 스크립트
+├── LICENSE                   # MIT
 ├── scripts/
-│   └── cmd-intercept.sh  # 슬래시 명령어 처리
-├── adapters/             # 다른 IDE용 (예정)
-└── packs/
-    └── cromaiping_default/
-        ├── openpeon.json
-        └── sounds/
+│   ├── cmd-intercept.sh      # 슬래시 명령어 처리
+│   ├── gen-placeholder-sounds.sh  # 기본 사운드 생성
+│   └── build-tarball.sh      # 배포본 빌드
+├── adapters/                 # 다른 IDE용 (예정)
+├── packs/
+│   └── cromaiping_default/
+│       ├── openpeon.json     # CESP v1.0 매니페스트
+│       └── sounds/           # gitignored (install 시 생성)
+└── website/                  # cromaizing.com 배포 자산
+    ├── index.html
+    ├── landing.md
+    └── DEPLOY.md
 ```
 
 ---
