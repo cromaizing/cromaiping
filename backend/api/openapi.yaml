@@ -1,0 +1,483 @@
+openapi: 3.0.3
+info:
+  title: 크로마이핑 팩 마켓플레이스 API
+  version: 1.0.0
+  description: |
+    cromaizing.com 통합용 크로마이핑 팩 마켓플레이스 백엔드 API.
+
+    핵심 정책:
+    - 로그인된 사용자는 모두 핸드폰 인증 완료자 (회원가입 시 검증)
+    - 등록 시 추가 인증/검증 단계 없음
+    - 약관 동의는 회원가입 시 1회로 갈음
+    - 콘텐츠는 GitHub 원본에서 다운로드 (cromaizing.com은 인덱서)
+  contact:
+    name: 우수에프앤씨 주식회사
+    email: woosu9859@gmail.com
+
+servers:
+  - url: https://cromaizing.com/api
+    description: 프로덕션
+  - url: http://localhost:3000/api
+    description: 로컬 개발
+
+tags:
+  - name: packs
+    description: 팩 등록/조회 (사용자)
+  - name: registry
+    description: 크로마이핑 CLI용 레지스트리 (공개)
+  - name: reports
+    description: 신고 (사용자)
+  - name: admin
+    description: 관리자 전용
+
+paths:
+  # ─────────────────────────────────────────────
+  # 팩 등록 + 조회 (사용자)
+  # ─────────────────────────────────────────────
+  /cromaiping/packs/preview:
+    post:
+      tags: [packs]
+      summary: GitHub URL 검증 + 미리보기
+      description: |
+        등록 전에 GitHub URL을 검증하고 메타데이터를 미리 보여줍니다.
+        사용자가 [등록] 버튼 누르기 전 호출.
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [github_url]
+              properties:
+                github_url:
+                  type: string
+                  format: uri
+                  example: https://github.com/user/my-pack
+      responses:
+        '200':
+          description: 검증 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackPreview'
+        '400':
+          description: 검증 실패 (URL 잘못됨, CESP 위반, 사이즈 초과 등)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: 이름 중복 (이미 등록된 팩)
+
+  /cromaiping/packs/submit:
+    post:
+      tags: [packs]
+      summary: 팩 등록 (즉시 게시글 생성)
+      description: |
+        검증 + 메타데이터 추출 + 자동 본문 생성 + 게시글 INSERT까지
+        모두 처리하고 게시글 URL을 반환합니다.
+
+        등록자는 회원가입 시 약관 동의로 콘텐츠 정책에 동의한 것으로 간주.
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [github_url]
+              properties:
+                github_url:
+                  type: string
+                  format: uri
+      responses:
+        '201':
+          description: 등록 완료
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pack_metadata_id:
+                    type: integer
+                  post_id:
+                    type: integer
+                  post_url:
+                    type: string
+                    example: /cromaiping/packs/my-pack
+                  name:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationFailure'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: 이름 중복
+        '429':
+          description: 레이트 리밋 (계정당 일 5팩)
+
+  /cromaiping/packs/list:
+    get:
+      tags: [packs]
+      summary: 팩 목록 (게시판 화면용)
+      description: |
+        4컬럼 게시판 (시간 / 제목 / 재생버튼 / 등록자) 데이터 반환.
+        검색 / 필터 / 정렬 / 페이지네이션 지원.
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+          description: 검색 키워드 (한글 OK)
+        - in: query
+          name: lang
+          schema: { type: string, example: ko }
+          description: 언어 필터 (BCP 47)
+        - in: query
+          name: tag
+          schema: { type: string }
+          description: 태그 필터
+        - in: query
+          name: sort
+          schema: { type: string, enum: [latest, popular, name] }
+          default: latest
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1 }
+          default: 1
+        - in: query
+          name: limit
+          schema: { type: integer, maximum: 100 }
+          default: 20
+      responses:
+        '200':
+          description: 목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total: { type: integer }
+                  page: { type: integer }
+                  packs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PackListItem'
+
+  /cromaiping/packs/{name}:
+    get:
+      tags: [packs]
+      summary: 개별 팩 상세 (게시글)
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: 팩 상세
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackDetail'
+        '404':
+          description: 팩 없음
+
+  /cromaiping/packs/my:
+    get:
+      tags: [packs]
+      summary: 내가 등록한 팩 목록
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: 목록
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/PackListItem' }
+
+  /cromaiping/packs/{name}:
+    delete:
+      tags: [packs]
+      summary: 내 팩 삭제 (등록자 본인만)
+      security:
+        - sessionAuth: []
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: 삭제 완료
+        '403':
+          description: 본인 팩 아님
+
+  # ─────────────────────────────────────────────
+  # 레지스트리 (공개)
+  # ─────────────────────────────────────────────
+  /cromaiping/registry.json:
+    get:
+      tags: [registry]
+      summary: 크로마이핑 CLI용 공개 레지스트리
+      description: |
+        cromaiping CLI가 fetch_registry()로 호출.
+        형식은 peon-ping registry와 호환.
+
+        캐시: CDN 5분
+      responses:
+        '200':
+          description: 레지스트리
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+
+  /cromaiping/packs/{name}/download:
+    post:
+      tags: [registry]
+      summary: 다운로드 카운트 ping (선택, 익명)
+      description: |
+        cromaiping CLI가 install 성공 시 호출 (익명, IP 해시만 저장).
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cromaiping_version: { type: string }
+      responses:
+        '204':
+          description: 기록됨
+
+  # ─────────────────────────────────────────────
+  # 신고 (사용자)
+  # ─────────────────────────────────────────────
+  /cromaiping/packs/{name}/report:
+    post:
+      tags: [reports]
+      summary: 팩 신고
+      security:
+        - sessionAuth: []   # 또는 비로그인도 허용 (DMCA용)
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                  enum: [copyright, inappropriate, broken, spam, other]
+                description: { type: string }
+                rightsholder_email: { type: string, format: email }
+                rightsholder_name: { type: string }
+      responses:
+        '201':
+          description: 신고 접수
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  report_id: { type: integer }
+
+  # ─────────────────────────────────────────────
+  # 관리자 전용
+  # ─────────────────────────────────────────────
+  /cromaiping/admin/reports:
+    get:
+      tags: [admin]
+      summary: 신고 큐 조회
+      security:
+        - sessionAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [open, in_review, resolved, rejected] }
+      responses:
+        '200':
+          description: 신고 목록
+        '403':
+          description: 관리자 권한 X
+
+  /cromaiping/admin/packs/{name}/freeze:
+    post:
+      tags: [admin]
+      summary: 팩 비공개 처리 (신고 검토 중)
+      security:
+        - sessionAuth: []
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: 처리됨
+
+  /cromaiping/admin/packs/{name}/remove:
+    delete:
+      tags: [admin]
+      summary: 팩 영구 제거 (저작권 침해 확인 시)
+      security:
+        - sessionAuth: []
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: 제거됨
+
+# ─────────────────────────────────────────────
+# 컴포넌트
+# ─────────────────────────────────────────────
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: session
+      description: cromaizing.com 기존 로그인 세션 쿠키
+
+  schemas:
+    PackPreview:
+      type: object
+      properties:
+        valid: { type: boolean }
+        metadata:
+          type: object
+          properties:
+            name: { type: string }
+            display_name: { type: string }
+            description: { type: string }
+            language: { type: string }
+            license: { type: string }
+            tags:
+              type: array
+              items: { type: string }
+            sound_count: { type: integer }
+            total_size_bytes: { type: integer }
+            sha256: { type: string }
+        sounds:
+          type: object
+          description: 카테고리별 사운드 정보
+          additionalProperties:
+            type: array
+            items:
+              type: object
+              properties:
+                file: { type: string }
+                label: { type: string }
+                preview_url: { type: string }
+        warnings:
+          type: array
+          items: { type: string }
+          description: 검증은 통과했지만 권장 사항 (예 "user.spam 카테고리 비어있음")
+
+    PackListItem:
+      type: object
+      description: 게시판 4컬럼 + 부가 정보
+      properties:
+        name: { type: string }
+        display_name: { type: string }
+        created_at: { type: string, format: date-time }
+        submitter_username: { type: string }
+        preview_sound_url: { type: string, nullable: true }
+        download_count: { type: integer }
+        language: { type: string }
+        post_url: { type: string }
+
+    PackDetail:
+      allOf:
+        - $ref: '#/components/schemas/PackListItem'
+        - type: object
+          properties:
+            description: { type: string }
+            github_url: { type: string }
+            license: { type: string }
+            tags: { type: array, items: { type: string } }
+            categories: { type: array, items: { type: string } }
+            sound_count: { type: integer }
+            total_size_bytes: { type: integer }
+            post_body_html: { type: string, description: 자동 생성 본문 (마크다운 → HTML) }
+            sounds:
+              type: object
+              description: 카테고리별 사운드 (전체 미리듣기 가능)
+
+    Registry:
+      type: object
+      properties:
+        registry_version: { type: string, example: "1.0" }
+        name: { type: string }
+        description: { type: string }
+        homepage: { type: string }
+        updated: { type: string, format: date-time }
+        packs:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string }
+              display_name: { type: string }
+              description: { type: string }
+              language: { type: string }
+              tags: { type: array, items: { type: string } }
+              license: { type: string }
+              source_repo: { type: string }
+              source_ref: { type: string }
+              source_path: { type: string }
+              sound_count: { type: integer }
+              total_size_bytes: { type: integer }
+              sha256: { type: string }
+              categories: { type: array, items: { type: string } }
+              cromaizing_post_url: { type: string }   # 게시글로 가는 링크
+
+    ValidationError:
+      type: object
+      properties:
+        valid: { type: boolean, default: false }
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code: { type: string, example: INVALID_MANIFEST }
+              field: { type: string }
+              message: { type: string }
+
+  responses:
+    Unauthorized:
+      description: 로그인 필요
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string, example: "로그인이 필요합니다" }
+
+    ValidationFailure:
+      description: 검증 실패
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'

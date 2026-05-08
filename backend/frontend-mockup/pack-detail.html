@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>카리나 음성팩 · 크로마이핑 · cromaizing</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="15" fill="#fff" stroke="#111" stroke-width="3.5"/>
+        <path d="M 28 13 A 9 9 0 1 0 28 27" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="29" cy="20" r="3" fill="#c084fc" stroke="#111" stroke-width="2"/>
+      </svg>
+      <span>cromaizing</span>
+    </a>
+  </div>
+</header>
+
+<div class="container" style="max-width: 50rem;">
+  <div style="margin-bottom: 1rem;">
+    <a href="/cromaiping/packs" style="color: var(--muted-foreground); font-size: 0.875rem;">← 팩 목록</a>
+  </div>
+
+  <div class="detail-hero">
+    <h1>🎙️ 카리나 음성팩</h1>
+    <div class="submitter">@woosu · 2026년 5월 9일 · ⬇ 124회 다운로드</div>
+    <div class="detail-meta">
+      <span class="meta-pill">🇰🇷 한국어</span>
+      <span class="meta-pill">🎵 6 sounds</span>
+      <span class="meta-pill">📦 392 KB</span>
+      <span class="meta-pill">📜 CC-BY-NC-4.0</span>
+    </div>
+  </div>
+
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin: 1.5rem 0 0.75rem;">🎵 미리듣기</h2>
+
+  <div class="sound-list">
+    <div class="sound-row">
+      <button class="play-btn" data-src="https://example.com/karina/session_start_01.mp3">▶</button>
+      <div style="flex: 1;">
+        <div style="font-weight: 500;">session.start</div>
+        <div style="color: var(--muted-foreground); font-size: 0.8125rem;">세션 시작 (1.93초)</div>
+      </div>
+    </div>
+    <div class="sound-row">
+      <button class="play-btn" data-src="https://example.com/karina/task_complete_01.mp3">▶</button>
+      <div style="flex: 1;">
+        <div style="font-weight: 500;">task.complete</div>
+        <div style="color: var(--muted-foreground); font-size: 0.8125rem;">작업 완료 (2.35초)</div>
+      </div>
+    </div>
+    <div class="sound-row">
+      <button class="play-btn" data-src="https://example.com/karina/task_error_01.mp3">▶</button>
+      <div style="flex: 1;">
+        <div style="font-weight: 500;">task.error</div>
+        <div style="color: var(--muted-foreground); font-size: 0.8125rem;">에러 발생 (1.93초)</div>
+      </div>
+    </div>
+    <div class="sound-row">
+      <button class="play-btn" data-src="https://example.com/karina/input_required_01.mp3">▶</button>
+      <div style="flex: 1;">
+        <div style="font-weight: 500;">input.required</div>
+        <div style="color: var(--muted-foreground); font-size: 0.8125rem;">입력 대기 (1.51초)</div>
+      </div>
+    </div>
+    <div class="sound-row">
+      <button class="play-btn" data-src="https://example.com/karina/resource_limit_01.mp3">▶</button>
+      <div style="flex: 1;">
+        <div style="font-weight: 500;">resource.limit</div>
+        <div style="color: var(--muted-foreground); font-size: 0.8125rem;">리소스 한계 (1.80초)</div>
+      </div>
+    </div>
+    <div class="sound-row">
+      <button class="play-btn" data-src="https://example.com/karina/task_acknowledge_01.mp3">▶</button>
+      <div style="flex: 1;">
+        <div style="font-weight: 500;">task.acknowledge</div>
+        <div style="color: var(--muted-foreground); font-size: 0.8125rem;">작업 인지 (1.62초)</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.75rem;">⚡ 설치 방법</h2>
+
+  <h3 style="font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem;">1단계: 크로마이핑 설치</h3>
+  <pre class="install-block" onclick="copyText(this)">brew install cromaizing/tap/cromaiping</pre>
+
+  <h3 style="font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem;">2단계: 이 팩 설치</h3>
+  <pre class="install-block" onclick="copyText(this)">cromaiping packs install karina</pre>
+
+  <h3 style="font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem;">3단계: 활성화</h3>
+  <pre class="install-block" onclick="copyText(this)">cromaiping packs use karina</pre>
+
+  <h3 style="font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem;">4단계: Claude Code 재시작</h3>
+  <p style="color: #4b5563; font-size: 0.9375rem;">설정 적용을 위해 Claude Code를 재시작하세요.</p>
+
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.75rem;">🔌 지원 IDE</h2>
+  <p style="color: #4b5563; font-size: 0.9375rem;">
+    이 팩은 <strong>11개 IDE</strong>에서 모두 동작합니다 — Claude Code, Cursor, OpenAI Codex, Gemini CLI,
+    Windsurf, Kiro, Rovo Dev, OpenClaw, DeepAgents, Antigravity, Kimi, OpenCode.
+  </p>
+
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.75rem;">📜 라이선스 + 출처</h2>
+  <div style="background: var(--muted); padding: 1rem 1.25rem; border-radius: 0.75rem; font-size: 0.875rem;">
+    <p><strong>라이선스</strong>: CC-BY-NC-4.0</p>
+    <p style="margin-top: 0.5rem;"><strong>저작권자</strong>: @woosu (등록자)</p>
+    <p style="margin-top: 0.5rem;"><strong>원본 GitHub</strong>:
+      <a href="https://github.com/woosu/karina-pack" style="color: var(--brand-violet);">github.com/woosu/karina-pack</a>
+    </p>
+    <p style="margin-top: 1rem; color: var(--muted-foreground); font-size: 0.8125rem;">
+      ⚠️ 사용자 등록 콘텐츠입니다. 저작권 책임은 등록자에게 있으며, 크로마이핑은 인덱서로서 콘텐츠를 직접 호스팅하지 않습니다.
+    </p>
+  </div>
+
+  <div style="margin: 2rem 0; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+    <button class="btn btn-secondary" onclick="window.location.href='/cromaiping/packs'">← 다른 팩 보기</button>
+    <button class="btn btn-secondary" onclick="reportPack()" style="margin-left: auto;">
+      🚨 신고하기
+    </button>
+  </div>
+
+  <!-- 댓글 영역 (cromaizing.com 기존 컴포넌트 통합) -->
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.75rem;">💬 댓글</h2>
+  <div style="background: var(--muted); padding: 2rem; border-radius: 0.75rem; text-align: center; color: var(--muted-foreground);">
+    (cromaizing.com 기존 댓글 시스템이 여기에 들어갑니다)
+  </div>
+</div>
+
+<div class="toast" id="toast">알림</div>
+
+<script>
+let currentAudio = null;
+let currentBtn = null;
+
+document.querySelectorAll('.play-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (currentBtn === btn) {
+      currentAudio?.pause();
+      btn.classList.remove('playing');
+      btn.textContent = '▶';
+      currentBtn = null;
+      currentAudio = null;
+      return;
+    }
+
+    if (currentBtn) {
+      currentBtn.classList.remove('playing');
+      currentBtn.textContent = '▶';
+      currentAudio?.pause();
+    }
+
+    const url = btn.dataset.src;
+    currentAudio = new Audio(url);
+    currentBtn = btn;
+    btn.classList.add('playing');
+    btn.textContent = '⏸';
+    currentAudio.play().catch(() => {});
+
+    currentAudio.onended = () => {
+      btn.classList.remove('playing');
+      btn.textContent = '▶';
+      currentBtn = null;
+    };
+  });
+});
+
+function copyText(el) {
+  navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+    showToast('✓ 복사되었습니다');
+  });
+}
+
+function reportPack() {
+  if (confirm('이 팩을 신고하시겠습니까? (저작권 침해, 부적절한 콘텐츠 등)')) {
+    // window.location.href = '/cromaiping/packs/karina/report';
+    showToast('신고 페이지로 이동...');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+</script>
+
+</body>
+</html>

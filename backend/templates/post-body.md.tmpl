@@ -1,0 +1,90 @@
+# {{display_name}}
+
+> {{description}}
+
+**등록자**: @{{submitter_username}}
+**등록일**: {{created_at}}
+**라이선스**: {{license}}
+**언어**: {{language_emoji}} {{language_name}}
+**사운드 수**: {{sound_count}}개
+**팩 사이즈**: {{total_size_human}}
+**원본 GitHub**: [{{source_repo}}]({{github_url}})
+
+---
+
+## 🎵 미리듣기
+
+| 카테고리 | 설명 | 들어보기 |
+|---|---|---|
+{{#each_category}}
+| `{{category_name}}` | {{category_label}} | [▶ 재생]({{first_sound_url}}) |
+{{/each_category}}
+
+---
+
+## ⚡ 설치 방법
+
+### 1단계: 크로마이핑 설치 (없으면)
+
+```bash
+brew install cromaizing/tap/cromaiping
+```
+
+또는 Curl one-liner:
+```bash
+curl -fsSL https://github.com/cromaizing/cromaiping/releases/latest/download/install.sh | bash
+```
+
+### 2단계: 이 팩 설치
+
+```bash
+cromaiping packs install {{name}}
+```
+
+### 3단계: 활성화
+
+이번 세션만 사용:
+```
+/cromaiping-use {{name}}
+```
+
+영구 변경:
+```bash
+cromaiping packs use {{name}}
+```
+
+### 4단계: Claude Code 재시작
+
+설정 적용을 위해 Claude Code(터미널/데스크톱 앱)를 재시작하세요.
+
+---
+
+## 🔌 지원 IDE
+
+이 팩은 **11개 IDE**에서 모두 동작합니다:
+- ✅ Claude Code (터미널 + 데스크톱 앱)
+- ✅ Cursor / OpenAI Codex / Gemini CLI / Windsurf
+- ✅ Kiro / Rovo Dev / OpenClaw / DeepAgents
+- ✅ Google Antigravity / Kimi Code / OpenCode
+
+각 IDE 셋업: [어댑터 가이드](https://github.com/cromaizing/cromaiping/tree/main/adapters)
+
+---
+
+## 📜 라이선스 정보
+
+이 팩은 **{{license}}** 라이선스로 배포됩니다.
+
+저작권은 등록자(@{{submitter_username}})에게 있습니다.
+원본 저장소: [{{source_repo}}]({{github_url}})
+
+---
+
+## ⚠️ 안내
+
+이 팩은 사용자 등록 콘텐츠입니다. 콘텐츠의 저작권 책임은 등록자에게 있으며,
+크로마이핑은 인덱서로서 콘텐츠를 직접 호스팅하지 않습니다.
+
+저작권 침해 또는 부적절한 콘텐츠 발견 시: [신고하기]({{report_url}})
+
+한국저작권보호원: [copy112.copyright.or.kr](https://copy112.copyright.or.kr)

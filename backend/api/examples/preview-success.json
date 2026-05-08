@@ -1,0 +1,43 @@
+{
+  "valid": true,
+  "metadata": {
+    "name": "karina",
+    "display_name": "카리나",
+    "description": "카리나 한국어 음성 팩",
+    "language": "ko",
+    "license": "CC-BY-NC-4.0",
+    "tags": ["korean", "kpop", "voice"],
+    "sound_count": 6,
+    "total_size_bytes": 401234,
+    "sha256": "00abb47ee070c789124c508908fc09951332dc4af84b26b872d5621489bf0bd5",
+    "source_repo": "user/my-karina-pack",
+    "source_ref": "main",
+    "source_path": ""
+  },
+  "sounds": {
+    "session.start": [
+      {
+        "file": "sounds/session_start_01.mp3",
+        "label": "세션 시작",
+        "preview_url": "https://raw.githubusercontent.com/user/my-karina-pack/main/sounds/session_start_01.mp3"
+      }
+    ],
+    "task.complete": [
+      {
+        "file": "sounds/task_complete_01.mp3",
+        "label": "작업 완료",
+        "preview_url": "https://raw.githubusercontent.com/user/my-karina-pack/main/sounds/task_complete_01.mp3"
+      }
+    ],
+    "task.error": [
+      {
+        "file": "sounds/task_error_01.mp3",
+        "label": "에러 발생",
+        "preview_url": "https://raw.githubusercontent.com/user/my-karina-pack/main/sounds/task_error_01.mp3"
+      }
+    ]
+  },
+  "warnings": [
+    "user.spam 카테고리에 사운드가 없습니다 — 빠른 입력 시 알림이 울리지 않습니다"
+  ]
+}

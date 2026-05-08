@@ -1,0 +1,20 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "MANIFEST_INVALID",
+      "field": "cesp_version",
+      "message": "cesp_version은 '1.0'이어야 합니다"
+    },
+    {
+      "code": "INVALID_AUDIO",
+      "field": "sounds[0].file",
+      "message": "sounds/start.wav 파일이 유효한 WAV 형식이 아닙니다 (매직바이트 불일치)"
+    },
+    {
+      "code": "SIZE_LIMIT_EXCEEDED",
+      "field": "total_size",
+      "message": "팩 전체 크기(78.4MB)가 50MB 제한을 초과합니다"
+    }
+  ]
+}
