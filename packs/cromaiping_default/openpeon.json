@@ -1,0 +1,55 @@
+{
+  "cesp_version": "1.0",
+  "name": "cromaiping_default",
+  "display_name": "크로마이핑 기본 팩",
+  "version": "0.1.0",
+  "description": "크로마이핑 기본 사운드 팩 (시스템 사운드 placeholder)",
+  "author": {
+    "name": "Cromaizing Team",
+    "github": "cromaizing"
+  },
+  "license": "MIT",
+  "language": "ko",
+  "homepage": "https://cromaizing.com/cromaiping",
+  "tags": ["korean", "default", "minimal"],
+  "categories": {
+    "session.start": {
+      "sounds": [
+        { "file": "sounds/start.wav", "label": "세션이 시작되었습니다." }
+      ]
+    },
+    "task.complete": {
+      "sounds": [
+        { "file": "sounds/complete.wav", "label": "작업이 완료되었습니다." }
+      ]
+    },
+    "task.error": {
+      "sounds": [
+        { "file": "sounds/error.wav", "label": "오류가 발생했습니다." }
+      ]
+    },
+    "input.required": {
+      "sounds": [
+        { "file": "sounds/input.wav", "label": "입력이 필요합니다." }
+      ]
+    },
+    "resource.limit": {
+      "sounds": [
+        { "file": "sounds/limit.wav", "label": "리소스 한도에 도달했습니다." }
+      ]
+    },
+    "user.spam": {
+      "sounds": [
+        { "file": "sounds/spam.wav", "label": "잠시 진정해주세요!" }
+      ]
+    }
+  },
+  "category_aliases": {
+    "greeting": "session.start",
+    "complete": "task.complete",
+    "error": "task.error",
+    "permission": "input.required",
+    "resource_limit": "resource.limit",
+    "annoyed": "user.spam"
+  }
+}

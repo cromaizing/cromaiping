@@ -1,0 +1,31 @@
+{
+  "default_pack": "cromaiping_default",
+  "volume": 0.8,
+  "enabled": true,
+  "desktop_notifications": true,
+  "language": "ko",
+  "categories": {
+    "session.start": true,
+    "task.acknowledge": false,
+    "task.complete": true,
+    "task.error": true,
+    "input.required": true,
+    "resource.limit": true,
+    "user.spam": true
+  },
+  "annoyed_threshold": 3,
+  "annoyed_window_seconds": 10,
+  "session_start_cooldown_seconds": 30,
+  "silent_window_seconds": 0,
+  "suppress_subagent_complete": false,
+  "pack_rotation": [],
+  "pack_rotation_mode": "random",
+  "path_rules": [],
+  "ide_rules": [],
+  "exclude_dirs": [],
+  "headphones_only": false,
+  "notification_position": "top-center",
+  "notification_dismiss_seconds": 4,
+  "notification_title_marker": "●",
+  "debug": false
+}

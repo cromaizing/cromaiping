@@ -1,0 +1,18 @@
+# 런타임 상태 파일
+.state.json
+.sound.pid
+.last_update_check
+*.log
+logs/
+
+# Placeholder 사운드 (저작권 회피 - install 시 macOS 시스템 사운드에서 생성)
+packs/cromaiping_default/sounds/*.wav
+packs/cromaiping_default/sounds/*.aiff
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
