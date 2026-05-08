@@ -1,0 +1,53 @@
+{
+  "cesp_version": "1.0",
+  "name": "karina",
+  "display_name": "카리나",
+  "version": "1.0.0",
+  "description": "카리나 한국어 음성 팩",
+  "author": {
+    "name": "Cromaizing"
+  },
+  "license": "CC-BY-NC-4.0",
+  "language": "ko",
+  "homepage": "https://cromaizing.com/cromaiping",
+  "tags": ["korean", "kpop", "voice"],
+  "categories": {
+    "session.start": {
+      "sounds": [
+        { "file": "sounds/session_start_01.mp3", "label": "세션 시작" }
+      ]
+    },
+    "task.acknowledge": {
+      "sounds": [
+        { "file": "sounds/task_acknowledge_01.mp3", "label": "작업 시작" }
+      ]
+    },
+    "task.complete": {
+      "sounds": [
+        { "file": "sounds/task_complete_01.mp3", "label": "작업 완료" }
+      ]
+    },
+    "task.error": {
+      "sounds": [
+        { "file": "sounds/task_error_01.mp3", "label": "에러 발생" }
+      ]
+    },
+    "input.required": {
+      "sounds": [
+        { "file": "sounds/input_required_01.mp3", "label": "입력 필요" }
+      ]
+    },
+    "resource.limit": {
+      "sounds": [
+        { "file": "sounds/resource_limit_01.mp3", "label": "메모리 한계" }
+      ]
+    }
+  },
+  "category_aliases": {
+    "greeting": "session.start",
+    "complete": "task.complete",
+    "error": "task.error",
+    "permission": "input.required",
+    "resource_limit": "resource.limit"
+  }
+}

@@ -12,6 +12,16 @@ dist/
 packs/cromaiping_default/sounds/*.wav
 packs/cromaiping_default/sounds/*.aiff
 
+# 음원 파일 (라이선스 검증 전까지 git에 포함 X — 매니페스트만 커밋)
+packs/*/sounds/*.mp3
+packs/*/sounds/*.wav
+packs/*/sounds/*.ogg
+packs/*/sounds/*.aiff
+
+# 팩 소스 폴더 (사용자가 작업 중인 원본 음원, 루트 한정)
+/Karina/
+*.source/
+
 # macOS
 .DS_Store
 
