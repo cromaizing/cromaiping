@@ -1,0 +1,56 @@
+# pack-info — 팩 메타데이터 (콜론 형식)
+# 빈 값은 기본값 사용. 주석은 # 으로 시작.
+
+name: my_pack_name
+display_name: 내 팩 이름
+description: 한 줄 설명
+voice: Yuna
+# 옵션:
+#   voice: Yuna       — macOS say 한국어 여성 음성 (기본)
+#   voice: Sora       — macOS say 한국어 여성 (iOS 17+)
+#   voice: Yelda      — macOS say 터키어 (실험적)
+#   audio_dir: ./recorded/  — 직접 녹음 파일 경로 (voice 대신)
+license: MIT
+author: 우수에프앤씨 주식회사
+language: ko
+version: 1.0.0
+
+# ─────────────────────────────────────────
+# 카테고리별 멘트 (한 줄에 하나씩)
+# 빈 카테고리는 빠질 수 있음
+# ─────────────────────────────────────────
+
+[session.start]
+시작할게요
+준비됐어요
+안녕하세요
+
+[task.acknowledge]
+네 알겠습니다
+시작합니다
+처리 중이에요
+
+[task.complete]
+끝났어요
+완료입니다
+잘 됐어요
+오늘도 수고하셨어요
+
+[task.error]
+어, 문제가 있네요
+다시 해볼까요
+같이 고쳐봐요
+
+[input.required]
+확인 부탁드려요
+한 번 봐주세요
+도움이 필요해요
+
+[resource.limit]
+메모리가 가득 찼어요
+정리할 시간이에요
+
+[user.spam]
+잠깐만요
+차근차근 부탁해요
+너무 빨라요
