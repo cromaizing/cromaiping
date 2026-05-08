@@ -157,25 +157,48 @@ cromaiping/
 
 ---
 
+## 🔌 지원 도구 (v0.1.2 — 11개)
+
+| 도구 | 셋팅 위치 | 비고 |
+|---|---|---|
+| Claude Code (터미널/데스크톱) | `~/.claude/settings.json` (자동) | 8개 이벤트 + 슬래시 명령어 |
+| Cursor | `~/.cursor/hooks.json` | python3 사용 (jq 불필요) |
+| OpenAI Codex | `~/.codex/config.toml` | notify 형식 |
+| Gemini CLI | `~/.gemini/settings.json` | hook 4개 매처 |
+| Windsurf | `~/.codeium/windsurf/hooks.json` | Cascade hooks |
+| Kiro | `~/.kiro/agents/cromaiping.json` | camelCase 이벤트 매핑 |
+| Rovo Dev (Atlassian) | `~/.rovodev/config.yml` | CLI 인자 형식 |
+| OpenClaw | skill 내부 호출 | 다양한 이벤트명 지원 |
+| DeepAgents | `~/.deepagents/hooks.json` | dotted event 매핑 |
+| Google Antigravity | 백그라운드 watcher | fswatch / inotify-tools 필요 |
+| Kimi Code (Moonshot) | macOS LaunchAgent / Linux nohup | --install 자동 셋업 |
+| OpenCode | TypeScript 플러그인 | 자동 설치 스크립트 |
+
+각 어댑터의 자세한 셋업은 `adapters/<이름>.sh` 헤더 주석 참고.
+
+---
+
 ## 🛣️ 로드맵
 
-### v0.1 (현재)
-- [x] Claude Code 훅 통합
-- [x] 기본 CLI 명령어
-- [x] 슬래시 명령어 인터셉터
-- [x] CESP 호환 매니페스트
-- [x] 한국어 메시지/UI
+### v0.1.2 (현재) ✅
+- [x] Claude Code 훅 통합 (터미널 + 데스크톱 앱)
+- [x] CLI + 한국어 슬래시 명령어 6개
+- [x] CESP v1.0 호환 매니페스트
+- [x] 외부 팩 다운로더 (cromaiping packs install)
+- [x] 카리나 한국어 음성팩 기본 활성화
+- [x] **11개 IDE 어댑터** (Cursor / Codex / Gemini / Windsurf / Kiro / Rovo Dev / OpenClaw / DeepAgents / Antigravity / Kimi / OpenCode)
+- [x] Homebrew + curl one-liner 배포
 
 ### v0.2 (예정)
-- [ ] 외부 팩 자동 다운로드 (openpeon 레지스트리 미러)
-- [ ] 팩 회전 모드 (random/round-robin)
-- [ ] 데스크톱 알림 오버레이 (macOS)
-- [ ] 자체 한국 팩 1-2개 제작
+- [ ] 데스크톱 오버레이 알림 (macOS)
+- [ ] 회의 자동 감지 (마이크 사용 시 음소거)
+- [ ] 자체 한국 팩 다양화 (5~10개)
+- [ ] 외부 팩 카탈로그 확장
 
 ### v0.3
-- [ ] Cursor 어댑터
-- [ ] Codex / Gemini CLI 어댑터
-- [ ] Homebrew tap
+- [ ] Windows 네이티브 지원
+- [ ] MCP 서버
+- [ ] 팩 회전 모드 향상
 
 ### v1.0
 - [ ] 카카오톡/슬랙 알림 통합
