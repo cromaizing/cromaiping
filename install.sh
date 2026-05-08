@@ -75,7 +75,10 @@ mkdir -p "$INSTALL_DIR"/{scripts,adapters,packs,logs}
 # ─────────────────────────────────────────────
 # 파일 복사 또는 원격 다운로드
 # ─────────────────────────────────────────────
-TARBALL_URL="${CROMAIPING_TARBALL_URL:-https://cromaizing.com/cromaiping/cromaiping-latest.tar.gz}"
+# 우선순위: 환경변수 > cromaizing.com (브랜드) > GitHub Release (백업)
+TARBALL_URL_PRIMARY="${CROMAIPING_TARBALL_URL:-https://cromaizing.com/cromaiping/cromaiping-latest.tar.gz}"
+TARBALL_URL_FALLBACK="https://github.com/cromaizing/cromaiping/releases/latest/download/cromaiping-latest.tar.gz"
+TARBALL_URL="$TARBALL_URL_PRIMARY"
 
 # curl | bash 로 실행되면 BASH_SOURCE가 비어있거나 /dev/fd/...
 SCRIPT_SRC=""
@@ -93,10 +96,14 @@ else
   TMP_DIR="$(mktemp -d)"
   trap 'rm -rf "$TMP_DIR"' EXIT
   TARBALL="$TMP_DIR/cromaiping.tar.gz"
-  if ! curl -fsSL "$TARBALL_URL" -o "$TARBALL"; then
-    err "다운로드 실패: $TARBALL_URL"
-    err "수동 설치: git clone https://github.com/cromaizing/cromaiping && cd cromaiping && bash install.sh"
-    exit 1
+  # 1순위: cromaizing.com / 2순위: GitHub Release
+  if ! curl -fsSL --max-time 15 "$TARBALL_URL_PRIMARY" -o "$TARBALL" 2>/dev/null; then
+    info "1순위 실패, GitHub Release에서 받는 중..."
+    if ! curl -fsSL --max-time 30 "$TARBALL_URL_FALLBACK" -o "$TARBALL"; then
+      err "모든 다운로드 소스 실패"
+      err "수동 설치: gh repo clone cromaizing/cromaiping && cd cromaiping && bash install.sh"
+      exit 1
+    fi
   fi
   tar -xzf "$TARBALL" -C "$TMP_DIR"
   SOURCE_DIR="$(find "$TMP_DIR" -maxdepth 2 -name 'cromaiping.sh' -exec dirname {} \; | head -1)"

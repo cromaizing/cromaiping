@@ -695,6 +695,9 @@
     </div>
     <div class="install-card-body">
       <div class="install-cmd" id="installCmd" onclick="copyCmd()">curl -fsSL https://cromaizing.com/cromaiping/install.sh | bash</div>
+      <div style="margin-top: 0.75rem; font-size: 0.8125rem; color: var(--muted-foreground);">
+        또는 Homebrew: <code id="brewCmd" onclick="copyBrew()" style="background: var(--code-bg); color: var(--brand-fuchsia); padding: 4px 8px; border-radius: 4px; cursor: pointer; user-select: all; font-family: 'SF Mono', monospace;">brew install cromaizing/tap/cromaiping</code>
+      </div>
       <div class="install-platforms">
         <span>지원:</span>
         <span class="platform-pill">🍎 macOS</span>
@@ -1211,6 +1214,14 @@
 <script>
 function copyCmd() {
   const cmd = document.getElementById('installCmd').textContent;
+  navigator.clipboard.writeText(cmd).then(() => {
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  });
+}
+function copyBrew() {
+  const cmd = document.getElementById('brewCmd').textContent;
   navigator.clipboard.writeText(cmd).then(() => {
     const toast = document.getElementById('copyToast');
     toast.classList.add('show');

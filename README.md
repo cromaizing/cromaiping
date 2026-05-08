@@ -20,12 +20,21 @@ Claude Code, Cursor, Codex 등 AI 코딩 도구가 작업을 완료하거나 입
 
 ## 🚀 설치
 
-### 30초 설치 (권장)
+### 🍺 Homebrew (macOS / Linux 추천)
 ```bash
-curl -fsSL https://cromaizing.com/cromaiping/install.sh | bash
+brew install cromaizing/tap/cromaiping
 ```
 
-### 로컬 설치 (개발자용)
+### ⚡ Curl one-liner (모든 플랫폼)
+```bash
+# cromaizing.com 호스팅 (브랜드 도메인)
+curl -fsSL https://cromaizing.com/cromaiping/install.sh | bash
+
+# 또는 GitHub Releases (백업)
+curl -fsSL https://github.com/cromaizing/cromaiping/releases/latest/download/install.sh | bash
+```
+
+### 📦 Git 클론 (개발자용)
 ```bash
 git clone https://github.com/cromaizing/cromaiping
 cd cromaiping
