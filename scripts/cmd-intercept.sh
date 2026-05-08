@@ -199,7 +199,26 @@ print('\n'.join(items) if items else '  (설치된 팩 없음)')
 PYEOF
 )
     respond "📦 설치된 팩:
-$LIST"
+$LIST
+
+💡 더 많은 팩: 터미널에서 cromaiping packs list --registry"
+    ;;
+
+  install|설치)
+    [ -z "$ARG" ] && respond "❌ 팩 이름을 입력해주세요. 예: /cromaiping-install peon"
+    # 비동기 실행 권장: 슬래시 핸들러는 5초 타임아웃이라 다운로드는 외부에서
+    respond "🌐 '$ARG' 다운로드를 시작합니다.
+
+터미널에서 다음을 실행해주세요:
+\`cromaiping packs install $ARG\`
+
+(다운로드는 시간이 걸리는 작업이라 슬래시 명령어 대신 터미널에서 진행해주세요)"
+    ;;
+
+  search|검색)
+    [ -z "$ARG" ] && respond "❌ 검색 키워드를 입력해주세요. 예: /cromaiping-search 한국어"
+    respond "🔍 검색 결과를 보려면 터미널에서:
+\`cromaiping packs search $ARG\`"
     ;;
 
   help|도움말)

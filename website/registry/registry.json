@@ -1,0 +1,144 @@
+{
+  "registry_version": "1.0",
+  "name": "크로마이핑 공식 레지스트리",
+  "description": "한국 사용자를 위해 큐레이션된 사운드 팩 모음",
+  "homepage": "https://cromaizing.com/cromaiping",
+  "updated": "2026-05-09T00:00:00Z",
+  "_doc": {
+    "ko": "이 파일은 cromaizing.com/cromaiping/registry.json 으로 호스팅됩니다. CESP v1.0 호환 팩 메타데이터를 담고 있으며, 외부 공개 팩 + 자체 한국 팩을 통합 관리합니다. 각 항목은 'name'(고유 ID), 'display_name'(표시명), 'source_repo'(GitHub 레포) 또는 'download_url'(직접 URL)을 포함합니다."
+  },
+  "packs": [
+    {
+      "name": "cromaiping_default",
+      "display_name": "크로마이핑 기본 팩",
+      "description": "크로마이핑 자체 기본 사운드 팩",
+      "language": "ko",
+      "tags": ["korean", "default", "minimal"],
+      "license": "MIT",
+      "download_url": "https://cromaizing.com/cromaiping/packs/cromaiping_default.tar.gz",
+      "sound_count": 6,
+      "categories": ["session.start", "task.complete", "task.error", "input.required", "resource.limit", "user.spam"]
+    },
+    {
+      "name": "teemo-kr",
+      "display_name": "티모 (한국어)",
+      "description": "League of Legends 티모 한국어 음성",
+      "language": "ko",
+      "tags": ["gaming", "lol", "korean"],
+      "license": "CC-BY-NC-4.0",
+      "source_repo": "PeonPing/og-packs",
+      "source_ref": "main",
+      "source_path": "teemo-kr",
+      "sound_count": 14,
+      "categories": ["session.start", "task.complete", "task.error", "input.required"]
+    },
+    {
+      "name": "sc2_scv_kr",
+      "display_name": "건설로봇 SCV (한국어)",
+      "description": "스타크래프트 II 건설로봇(SCV) 한국어 음성",
+      "language": "ko",
+      "tags": ["gaming", "starcraft", "blizzard", "korean"],
+      "license": "CC-BY-NC-4.0",
+      "source_repo": "PeonPing/og-packs",
+      "source_ref": "main",
+      "source_path": "sc2_scv_kr",
+      "sound_count": 28,
+      "categories": ["session.start", "task.acknowledge", "task.complete", "task.error", "input.required", "resource.limit", "user.spam"]
+    },
+    {
+      "name": "peon",
+      "display_name": "Orc Peon",
+      "description": "Warcraft III Peon voice lines",
+      "language": "en",
+      "tags": ["gaming", "warcraft", "blizzard"],
+      "license": "CC-BY-NC-4.0",
+      "source_repo": "PeonPing/og-packs",
+      "source_ref": "main",
+      "source_path": "peon",
+      "sound_count": 18,
+      "categories": ["session.start", "task.acknowledge", "task.complete", "task.error", "input.required", "resource.limit", "user.spam"]
+    },
+    {
+      "name": "glados",
+      "display_name": "GLaDOS (Portal)",
+      "description": "Portal의 GLaDOS 음성",
+      "language": "en",
+      "tags": ["gaming", "portal", "valve", "scifi"],
+      "license": "CC-BY-NC-4.0",
+      "source_repo": "PeonPing/og-packs",
+      "source_ref": "main",
+      "source_path": "glados",
+      "sound_count": 23,
+      "categories": ["session.start", "task.complete", "task.error", "input.required"]
+    },
+    {
+      "name": "sc_kerrigan",
+      "display_name": "사라 케리건 (스타크래프트)",
+      "description": "스타크래프트 사라 케리건 음성",
+      "language": "en",
+      "tags": ["gaming", "starcraft", "blizzard"],
+      "license": "CC-BY-NC-4.0",
+      "source_repo": "PeonPing/og-packs",
+      "source_ref": "main",
+      "source_path": "sc_kerrigan",
+      "sound_count": 14,
+      "categories": ["session.start", "task.complete", "task.error", "user.spam"]
+    },
+    {
+      "name": "jarvis",
+      "display_name": "J.A.R.V.I.S. (자비스)",
+      "description": "아이언맨 자비스 AI 음성",
+      "language": "en",
+      "tags": ["movies", "marvel", "ai", "scifi"],
+      "license": "CC-BY-NC-4.0",
+      "source_repo": "PeonPing/og-packs",
+      "source_ref": "main",
+      "source_path": "jarvis",
+      "sound_count": 20,
+      "categories": ["session.start", "task.complete", "task.error", "input.required"]
+    },
+    {
+      "name": "hal_2001",
+      "display_name": "HAL 9000 (2001 스페이스 오디세이)",
+      "description": "스탠리 큐브릭 영화의 HAL 9000",
+      "language": "en",
+      "tags": ["movies", "scifi", "ai"],
+      "license": "CC-BY-NC-4.0",
+      "source_repo": "PeonPing/og-packs",
+      "source_ref": "main",
+      "source_path": "hal_2001",
+      "sound_count": 15,
+      "categories": ["session.start", "task.complete", "task.error", "input.required"]
+    },
+    {
+      "name": "r2d2",
+      "display_name": "R2-D2 (스타워즈)",
+      "description": "스타워즈 R2-D2 사운드",
+      "language": "en",
+      "tags": ["movies", "starwars", "scifi"],
+      "license": "CC-BY-NC-4.0",
+      "source_repo": "PeonPing/og-packs",
+      "source_ref": "main",
+      "source_path": "r2d2",
+      "sound_count": 12,
+      "categories": ["session.start", "task.complete", "task.error"]
+    },
+    {
+      "name": "clean_chimes",
+      "display_name": "심플 차임 (미니멀)",
+      "description": "차분한 차임벨 사운드 (UI 사운드)",
+      "language": "en",
+      "tags": ["minimal", "ui", "subtle"],
+      "license": "CC0",
+      "source_repo": "PeonPing/og-packs",
+      "source_ref": "main",
+      "source_path": "clean_chimes",
+      "sound_count": 8,
+      "categories": ["session.start", "task.complete", "task.error", "input.required"]
+    }
+  ],
+  "_attribution": {
+    "license_notice": "외부 호스팅 팩들은 각 저작자의 라이선스를 따릅니다. 자세한 라이선스 정보는 각 팩의 LICENSE 파일을 참고해주세요.",
+    "ko": "본 레지스트리는 크로마이핑 사용자를 위한 메타데이터 모음입니다. 각 팩의 실제 다운로드 및 저작권은 원 저작자에게 있습니다."
+  }
+}
