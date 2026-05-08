@@ -12,11 +12,15 @@ dist/
 packs/cromaiping_default/sounds/*.wav
 packs/cromaiping_default/sounds/*.aiff
 
-# 음원 파일 (라이선스 검증 전까지 git에 포함 X — 매니페스트만 커밋)
+# 음원 파일 (기본 제외 — 신규 팩은 라이선스 검증 후 명시적 opt-in)
 packs/*/sounds/*.mp3
 packs/*/sounds/*.wav
 packs/*/sounds/*.ogg
 packs/*/sounds/*.aiff
+
+# 라이선스 OK 확인된 팩들 (명시적 포함)
+!packs/karina/sounds/*.mp3
+!packs/karina/sounds/*.wav
 
 # 팩 소스 폴더 (사용자가 작업 중인 원본 음원, 루트 한정)
 /Karina/
