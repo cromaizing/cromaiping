@@ -14,12 +14,9 @@
   "icon": "overlay/karina.gif",
   "overlay": {
     "icon": "overlay/karina.gif",
-    "background": "linear-gradient(135deg, #d946ef 0%, #fb7185 50%, #7c3aed 100%)",
-    "text_color": "#ffffff",
-    "size": "large",
-    "duration_ms": 4500,
-    "animation": "fade-slide",
-    "border_radius": "20px"
+    "color": "pink",
+    "duration_seconds": 4.5,
+    "position": "top-right"
   },
   "categories": {
     "session.start": {

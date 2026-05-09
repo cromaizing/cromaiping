@@ -95,31 +95,32 @@ notify() {
       local overlay_script="$CROMAIPING_DIR/scripts/pack-overlay.js"
 
       if [ -n "$pack" ] && [ -f "$manifest" ] && [ -f "$overlay_script" ]; then
-        # 매니페스트의 overlay 정보 추출
+        # 매니페스트의 overlay 정보 추출 (peon-ping 패턴)
         local overlay_info=$(python3 -c "
 import json
 try:
     m = json.load(open('$manifest'))
     ov = m.get('overlay', {})
     icon = ov.get('icon') or m.get('icon', '')
-    bg = ov.get('background', 'linear-gradient(135deg, #7c3aed, #d946ef, #fb7185)')
-    duration = ov.get('duration_ms', 4000)
+    color = ov.get('color', 'violet')
+    duration = ov.get('duration_seconds', 4.5)
+    position = ov.get('position', 'top-right')
     if icon and not icon.startswith('/'):
         icon = '$pack_dir/' + icon
-    print(f'{icon}|{bg}|{duration}')
+    print(f'{icon}|{color}|{duration}|{position}')
 except Exception:
-    print('||')
+    print('||||')
 " 2>/dev/null)
 
         local overlay_gif=$(echo "$overlay_info" | cut -d'|' -f1)
-        local overlay_bg=$(echo "$overlay_info" | cut -d'|' -f2)
+        local overlay_color=$(echo "$overlay_info" | cut -d'|' -f2)
         local overlay_dur=$(echo "$overlay_info" | cut -d'|' -f3)
+        local overlay_pos=$(echo "$overlay_info" | cut -d'|' -f4)
 
         if [ -n "$overlay_gif" ] && [ -f "$overlay_gif" ]; then
-          # GIF 오버레이 렌더링 (백그라운드)
-          local notif_pos="${CROMAIPING_NOTIF_POSITION:-top-right}"
+          # 백그라운드로 띄움 (hook context detach)
           (osascript -l JavaScript "$overlay_script" \
-            "$overlay_gif" "$msg" "$overlay_bg" "$overlay_dur" "$notif_pos" \
+            "$overlay_gif" "$msg" "$overlay_color" "$overlay_dur" "$overlay_pos" \
             >/dev/null 2>&1 &) </dev/null
           return 0
         fi
