@@ -86,9 +86,46 @@ play_sound() {
 # 데스크톱 알림 (플랫폼별)
 # ─────────────────────────────────────────────
 notify() {
-  local msg="$1" title="${2:-크로마이핑}"
+  local msg="$1" title="${2:-크로마이핑}" pack="${3:-}"
   case "$PLATFORM" in
     mac)
+      # 활성 팩 매니페스트에서 overlay 정보 추출
+      local pack_dir="$CROMAIPING_DIR/packs/$pack"
+      local manifest="$pack_dir/openpeon.json"
+      local overlay_script="$CROMAIPING_DIR/scripts/pack-overlay.js"
+
+      if [ -n "$pack" ] && [ -f "$manifest" ] && [ -f "$overlay_script" ]; then
+        # 매니페스트의 overlay 정보 추출
+        local overlay_info=$(python3 -c "
+import json
+try:
+    m = json.load(open('$manifest'))
+    ov = m.get('overlay', {})
+    icon = ov.get('icon') or m.get('icon', '')
+    bg = ov.get('background', 'linear-gradient(135deg, #7c3aed, #d946ef, #fb7185)')
+    duration = ov.get('duration_ms', 4000)
+    if icon and not icon.startswith('/'):
+        icon = '$pack_dir/' + icon
+    print(f'{icon}|{bg}|{duration}')
+except Exception:
+    print('||')
+" 2>/dev/null)
+
+        local overlay_gif=$(echo "$overlay_info" | cut -d'|' -f1)
+        local overlay_bg=$(echo "$overlay_info" | cut -d'|' -f2)
+        local overlay_dur=$(echo "$overlay_info" | cut -d'|' -f3)
+
+        if [ -n "$overlay_gif" ] && [ -f "$overlay_gif" ]; then
+          # GIF 오버레이 렌더링 (백그라운드)
+          local notif_pos="${CROMAIPING_NOTIF_POSITION:-top-right}"
+          (osascript -l JavaScript "$overlay_script" \
+            "$overlay_gif" "$msg" "$overlay_bg" "$overlay_dur" "$notif_pos" \
+            >/dev/null 2>&1 &) </dev/null
+          return 0
+        fi
+      fi
+
+      # Fallback: 기본 macOS 알림
       osascript -e "display notification \"$msg\" with title \"$title\"" 2>/dev/null & ;;
     linux)
       command -v notify-send >/dev/null 2>&1 && notify-send "$title" "$msg" 2>/dev/null & ;;
@@ -874,6 +911,7 @@ print(f"PLAY={file_path}")
 print(f"VOL={volume}")
 print(f"LABEL={notify_msg}")
 print(f"NOTIFY={'1' if cfg.get('desktop_notifications', True) else '0'}")
+print(f"ACTIVE_PACK={pack}")
 PYEOF
 )
 
@@ -882,19 +920,21 @@ PLAY_FILE=""
 VOL="0.5"
 LABEL=""
 NOTIFY="0"
+ACTIVE_PACK=""
 while IFS='=' read -r key val; do
   case "$key" in
     PLAY) PLAY_FILE="$val" ;;
     VOL) VOL="$val" ;;
     LABEL) LABEL="$val" ;;
     NOTIFY) NOTIFY="$val" ;;
+    ACTIVE_PACK) ACTIVE_PACK="$val" ;;
   esac
 done <<< "$RESULT"
 
 # 사운드 재생
 [ -n "$PLAY_FILE" ] && [ -f "$PLAY_FILE" ] && play_sound "$PLAY_FILE" "$VOL"
 
-# 데스크톱 알림 (옵션)
-[ "$NOTIFY" = "1" ] && [ -n "$LABEL" ] && notify "$LABEL"
+# 데스크톱 알림 (옵션) — 매니페스트 overlay 정보로 GIF 오버레이 렌더링
+[ "$NOTIFY" = "1" ] && [ -n "$LABEL" ] && notify "$LABEL" "크로마이핑" "$ACTIVE_PACK"
 
 exit 0

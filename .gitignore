@@ -33,3 +33,7 @@ packs/*/sounds/*.aiff
 .vscode/
 .idea/
 *.swp
+
+# 카리나 overlay GIF (라이선스 OK 확인)
+!packs/karina/overlay/
+!packs/karina/overlay/*.gif

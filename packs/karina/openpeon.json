@@ -2,15 +2,25 @@
   "cesp_version": "1.0",
   "name": "karina",
   "display_name": "카리나",
-  "version": "1.0.0",
-  "description": "카리나 한국어 음성 팩",
+  "version": "1.1.0",
+  "description": "카리나 한국어 음성 팩 — 사운드 + GIF 오버레이",
   "author": {
     "name": "Cromaizing"
   },
   "license": "CC-BY-NC-4.0",
   "language": "ko",
   "homepage": "https://cromaizing.com/cromaiping",
-  "tags": ["korean", "kpop", "voice"],
+  "tags": ["korean", "kpop", "voice", "overlay"],
+  "icon": "overlay/karina.gif",
+  "overlay": {
+    "icon": "overlay/karina.gif",
+    "background": "linear-gradient(135deg, #d946ef 0%, #fb7185 50%, #7c3aed 100%)",
+    "text_color": "#ffffff",
+    "size": "large",
+    "duration_ms": 4500,
+    "animation": "fade-slide",
+    "border_radius": "20px"
+  },
   "categories": {
     "session.start": {
       "sounds": [
