@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>팩 만드는 법 · 크로마이핑 · cromaizing</title>
+  <meta name="description" content="크로마이핑 사운드팩 만들고 등록하는 방법을 5단계로 친절하게 안내합니다. 무료 자동화 도구 포함.">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Create-pack 가이드 전용 스타일 */
+    .guide-hero {
+      padding: 5rem 0 3rem;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(124,58,237,0.03), rgba(217,70,239,0.02), transparent);
+    }
+    .guide-hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    @media (min-width: 640px) { .guide-hero h1 { font-size: 3.5rem; } }
+    .guide-hero p {
+      font-size: 1.125rem;
+      color: var(--muted-foreground);
+      max-width: 36rem;
+      margin: 0 auto 2rem;
+    }
+    .guide-meta {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .meta-chip {
+      padding: 0.375rem 0.875rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    /* TOC */
+    .toc {
+      max-width: 36rem;
+      margin: 2rem auto 4rem;
+      background: var(--muted);
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+    .toc h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--brand-violet); }
+    .toc ol { list-style: none; counter-reset: toc; }
+    .toc li {
+      counter-increment: toc;
+      padding: 0.375rem 0;
+      font-size: 0.9375rem;
+      color: #374151;
+      display: flex;
+      gap: 0.625rem;
+    }
+    .toc li::before {
+      content: counter(toc);
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: white;
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--brand-violet);
+      flex-shrink: 0;
+    }
+    .toc li a:hover { color: var(--brand-violet); }
+
+    /* Steps */
+    .step-section {
+      max-width: 48rem;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+    }
+    .step-header {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .step-num-large {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, var(--brand-violet), var(--brand-fuchsia));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .step-section h2 {
+      font-size: 1.875rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+    }
+    .step-section .lead {
+      color: var(--muted-foreground);
+      font-size: 1.0625rem;
+      margin-bottom: 1.5rem;
+    }
+    .step-section h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    /* Code blocks */
+    .code-block {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1rem 1.25rem;
+      border-radius: 0.75rem;
+      font-family: 'SF Mono', Menlo, Monaco, monospace;
+      font-size: 0.8125rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+      white-space: pre;
+      user-select: all;
+      cursor: pointer;
+      line-height: 1.6;
+      position: relative;
+    }
+    .code-block::after {
+      content: '복사';
+      position: absolute;
+      top: 0.5rem;
+      right: 0.75rem;
+      font-size: 0.6875rem;
+      color: var(--muted-foreground);
+      background: rgba(255,255,255,0.1);
+      padding: 0.125rem 0.5rem;
+      border-radius: 0.25rem;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .code-block:hover::after { opacity: 1; }
+    .code-block.json { color: #f9fafb; }
+    .code-block .comment { color: #6b7280; }
+    .code-block .key { color: #f0abfc; }
+    .code-block .str { color: #86efac; }
+
+    /* Option cards */
+    .option-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    @media (min-width: 640px) { .option-cards { grid-template-columns: 1fr 1fr; } }
+    .option-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.125rem 1.25rem;
+      transition: border-color 0.2s;
+    }
+    .option-card:hover { border-color: var(--brand-violet); }
+    .option-card.recommended {
+      border-color: var(--brand-violet);
+      background: linear-gradient(135deg, rgba(124,58,237,0.03), rgba(217,70,239,0.02));
+    }
+    .option-card.recommended::before {
+      content: '⭐ 추천';
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--brand-violet);
+      background: white;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      margin-bottom: 0.5rem;
+      border: 1px solid var(--brand-violet);
+    }
+    .option-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.375rem; }
+    .option-card p { font-size: 0.875rem; color: var(--muted-foreground); margin: 0; }
+
+    /* Tip / Warning */
+    .tip-box {
+      background: rgba(124, 58, 237, 0.05);
+      border-left: 3px solid var(--brand-violet);
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 0.9375rem;
+      color: #4b5563;
+    }
+    .tip-box strong { color: var(--brand-violet); }
+    .warn-box {
+      background: rgba(245, 158, 11, 0.05);
+      border-left: 3px solid var(--orange);
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 0.9375rem;
+      color: #78350f;
+    }
+    .warn-box strong { color: var(--orange); }
+
+    /* File tree */
+    .file-tree {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.25rem;
+      border-radius: 0.75rem;
+      font-family: 'SF Mono', Menlo, Monaco, monospace;
+      font-size: 0.8125rem;
+      line-height: 1.7;
+    }
+    .file-tree .folder { color: var(--brand-fuchsia); }
+    .file-tree .file { color: #d1d5db; }
+    .file-tree .comment { color: #6b7280; }
+
+    /* CTA */
+    .cta-final {
+      max-width: 48rem;
+      margin: 5rem auto;
+      padding: 3rem 2rem;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(124,58,237,0.05), rgba(217,70,239,0.04), rgba(251,113,133,0.03));
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+    }
+    .cta-final h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.025em; }
+    .cta-final p { color: var(--muted-foreground); margin-bottom: 1.5rem; }
+    .cta-final .btn-gradient { font-size: 1rem; padding: 0.875rem 1.75rem; }
+
+    /* FAQ */
+    .faq {
+      max-width: 48rem;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+    }
+    details.faq-item {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+    details.faq-item summary {
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    details.faq-item summary::-webkit-details-marker { display: none; }
+    details.faq-item summary::after { content: '+'; color: var(--brand-violet); font-size: 1.25rem; transition: transform 0.2s; }
+    details.faq-item[open] summary::after { transform: rotate(45deg); }
+    details.faq-item div.faq-body {
+      padding: 0 1.25rem 1.125rem;
+      color: #4b5563;
+      font-size: 0.9375rem;
+      line-height: 1.7;
+    }
+    details.faq-item code {
+      background: var(--muted);
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-size: 0.8125rem;
+      color: var(--brand-violet);
+    }
+
+    /* Pretty section divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4rem auto;
+      max-width: 36rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="15" fill="#fff" stroke="#111" stroke-width="3.5"/>
+        <path d="M 28 13 A 9 9 0 1 0 28 27" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="29" cy="20" r="3" fill="#c084fc" stroke="#111" stroke-width="2"/>
+      </svg>
+      <span>cromaizing</span>
+    </a>
+    <nav style="display:flex; gap:1.5rem; font-size:0.875rem; color:#4b5563;">
+      <a href="/blog">블로그</a>
+      <a href="/community">커뮤니티</a>
+      <a href="/skills">AI 툴즈 다운로드</a>
+      <a href="/cromaiping" style="color:var(--brand-violet); font-weight:600;">크로마이핑</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="guide-hero">
+  <div style="max-width: 48rem; margin: 0 auto; padding: 0 1.5rem;">
+    <div class="guide-meta">
+      <span class="meta-chip">📖 가이드</span>
+      <span class="meta-chip">⏱️ 약 15분</span>
+      <span class="meta-chip">💰 무료</span>
+      <span class="meta-chip">🇰🇷 한국어</span>
+    </div>
+    <h1>내 사운드팩<br><span class="brand-gradient-text">만들기</span></h1>
+    <p>
+      좋아하는 음성/사운드로 나만의 알림팩을 만들고, 다른 크로마이저들과 공유하세요.<br>
+      Git만 다룰 줄 알면 5단계, 약 15분이면 끝납니다.
+    </p>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h2>📋 단계 목차</h2>
+    <ol>
+      <li><a href="#step-1">사운드 파일 준비하기</a></li>
+      <li><a href="#step-2">GitHub 저장소 만들기</a></li>
+      <li><a href="#step-3">매니페스트 작성하기 (자동 도구 추천)</a></li>
+      <li><a href="#step-4">GitHub에 푸시하기</a></li>
+      <li><a href="#step-5">cromaizing.com에 등록하기</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- STEP 1: 사운드 준비 -->
+<section class="step-section" id="step-1">
+  <div class="step-header">
+    <div class="step-num-large">1</div>
+    <h2>사운드 파일 준비하기</h2>
+  </div>
+  <p class="lead">
+    먼저 알림에 사용할 음성/사운드 파일을 준비하세요. 보통 <strong>5-15초 분량의 짧은 클립 6~10개</strong>면 충분합니다.
+  </p>
+
+  <h3>4가지 방법 중 선택</h3>
+  <div class="option-cards">
+    <div class="option-card recommended">
+      <h4>🤖 AI TTS로 자동 생성</h4>
+      <p>macOS의 <code>say</code> 명령어, 네이버 클로바, ElevenLabs 등으로 한국어 음성을 합성. 가장 빠르고 라이선스 깔끔.</p>
+    </div>
+    <div class="option-card">
+      <h4>🎙️ 본인 직접 녹음</h4>
+      <p>QuickTime 또는 폰 녹음기로 직접 녹음. 가장 친근하고 개성 있음.</p>
+    </div>
+    <div class="option-card">
+      <h4>💎 라이선스 음원 구입</h4>
+      <p>Soundsnap, AudioJungle 등에서 상업용 라이선스 구입.</p>
+    </div>
+    <div class="option-card">
+      <h4>🆓 CC0/Public Domain</h4>
+      <p>freesound.org 등 무료 사운드 라이브러리에서 가져오기.</p>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>💡 macOS 사용자 팁</strong> — 한국어 음성 합성이 무료로 가능합니다:
+    <div class="code-block">say -v Yuna -o start.aiff "작업을 시작합니다"
+afconvert start.aiff start.mp3 -d aac -f m4af</div>
+  </div>
+
+  <div class="warn-box">
+    <strong>⚠️ 저작권 주의</strong> — 게임/영화/방송에서 추출한 음원은 절대 사용하지 마세요. 등록 후 침해 신고가 들어오면 계정 차단될 수 있습니다.
+  </div>
+
+  <h3>파일 형식 요구사항</h3>
+  <ul style="margin: 0.75rem 0 0 1.5rem; color: #374151; line-height: 2;">
+    <li>지원 포맷: <code>.mp3</code> / <code>.wav</code> / <code>.ogg</code></li>
+    <li>파일당 최대 <strong>1MB</strong></li>
+    <li>전체 팩 최대 <strong>50MB</strong></li>
+    <li>파일명: 영문/숫자/하이픈/언더스코어만 (한글 X)</li>
+    <li>권장 길이: 1~5초</li>
+  </ul>
+</section>
+
+<div class="divider"></div>
+
+<!-- STEP 2: GitHub repo -->
+<section class="step-section" id="step-2">
+  <div class="step-header">
+    <div class="step-num-large">2</div>
+    <h2>GitHub 저장소 만들기</h2>
+  </div>
+  <p class="lead">
+    크로마이핑은 사용자가 만든 팩을 직접 호스팅하지 않고, 각자의 GitHub 저장소를 인덱싱합니다. 그래서 GitHub에 새 저장소를 만들어야 해요.
+  </p>
+
+  <h3>2-1. GitHub.com에서 새 저장소 만들기</h3>
+  <ol style="margin: 0.5rem 0 0 1.5rem; line-height: 2;">
+    <li><a href="https://github.com/new" target="_blank" style="color: var(--brand-violet);">github.com/new</a> 접속</li>
+    <li><strong>Repository name</strong>: <code>cromaiping-내팩이름</code> (예: cromaiping-mypack)</li>
+    <li><strong>Public</strong> 선택 (Private은 cromaizing이 접근 불가)</li>
+    <li>"Create repository" 클릭</li>
+  </ol>
+
+  <h3>2-2. 로컬에 클론</h3>
+  <div class="code-block">git clone https://github.com/&lt;본인-사용자명&gt;/cromaiping-mypack.git
+cd cromaiping-mypack</div>
+
+  <div class="tip-box">
+    <strong>💡 GitHub 처음이세요?</strong> <a href="https://docs.github.com/ko/get-started/quickstart" target="_blank" style="color: var(--brand-violet);">GitHub 한국어 시작 가이드</a>를 먼저 보세요. 약 5분 분량.
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STEP 3: 매니페스트 -->
+<section class="step-section" id="step-3">
+  <div class="step-header">
+    <div class="step-num-large">3</div>
+    <h2>매니페스트 작성하기</h2>
+  </div>
+  <p class="lead">
+    크로마이핑(과 다른 호환 도구)이 팩을 인식할 수 있도록 <code>openpeon.json</code> 매니페스트 파일을 만들어야 합니다. 손으로 쓸 수도 있지만, <strong>자동 생성 도구</strong>를 강력 추천합니다.
+  </p>
+
+  <h3>방법 A: 자동 도구 사용 (추천 ⭐)</h3>
+  <p>크로마이핑 자체 스크립트로 텍스트 파일 1개만 작성하면 모든 게 자동으로 만들어집니다.</p>
+
+  <div class="code-block"># 1. 크로마이핑 설치 (한 번만)
+brew install cromaizing/tap/cromaiping
+
+# 2. 템플릿 가져와서 편집
+curl -O https://raw.githubusercontent.com/cromaizing/cromaiping/main/templates/pack-template.txt
+# 텍스트 에디터로 pack-template.txt 편집
+
+# 3. 자동 빌드
+bash &lt;(curl -fsSL https://raw.githubusercontent.com/cromaizing/cromaiping/main/scripts/make-pack.sh) pack-template.txt</div>
+
+  <h3>이미 음원 파일이 있다면? import-pack.sh</h3>
+  <p>녹음/합성 끝난 음원이 이미 있으면 폴더 통째로 변환:</p>
+  <div class="code-block"># 폴더에 음원 파일 정리:
+#   ./my-pack/session.start.mp3
+#   ./my-pack/task.complete.mp3
+#   ./my-pack/task.error.mp3
+#   ...
+
+bash &lt;(curl -fsSL https://raw.githubusercontent.com/cromaizing/cromaiping/main/scripts/import-pack.sh) mypack ./my-pack/ "내 팩 표시명"</div>
+
+  <h3>방법 B: 직접 작성</h3>
+  <p>편한 대로 <code>openpeon.json</code> 직접 작성도 가능. 최소 형식:</p>
+  <div class="code-block json"><span class="key">"cesp_version"</span>: <span class="str">"1.0"</span>,
+<span class="key">"name"</span>: <span class="str">"mypack"</span>,
+<span class="key">"display_name"</span>: <span class="str">"내 팩"</span>,
+<span class="key">"version"</span>: <span class="str">"1.0.0"</span>,
+<span class="key">"description"</span>: <span class="str">"한국어 AI 음성팩"</span>,
+<span class="key">"language"</span>: <span class="str">"ko"</span>,
+<span class="key">"license"</span>: <span class="str">"CC-BY-NC-4.0"</span>,
+<span class="key">"author"</span>: { <span class="key">"name"</span>: <span class="str">"내 이름"</span> },
+<span class="key">"categories"</span>: {
+  <span class="key">"session.start"</span>: { <span class="key">"sounds"</span>: [
+    { <span class="key">"file"</span>: <span class="str">"sounds/start.mp3"</span>, <span class="key">"label"</span>: <span class="str">"세션 시작"</span> }
+  ]},
+  <span class="key">"task.complete"</span>: { <span class="key">"sounds"</span>: [
+    { <span class="key">"file"</span>: <span class="str">"sounds/done.mp3"</span>, <span class="key">"label"</span>: <span class="str">"작업 완료"</span> }
+  ]}
+}</div>
+
+  <h3>최종 폴더 구조</h3>
+  <div class="file-tree"><span class="folder">cromaiping-mypack/</span>
+├── <span class="file">openpeon.json</span>          <span class="comment"># 매니페스트 (필수)</span>
+├── <span class="folder">sounds/</span>                <span class="comment"># 음원 폴더</span>
+│   ├── <span class="file">start.mp3</span>
+│   ├── <span class="file">done.mp3</span>
+│   ├── <span class="file">error.mp3</span>
+│   └── <span class="file">...</span>
+├── <span class="file">README.md</span>             <span class="comment"># 선택 (팩 설명)</span>
+└── <span class="file">LICENSE</span>               <span class="comment"># 선택 (라이선스 명시)</span></div>
+
+  <div class="tip-box">
+    <strong>💡 카테고리 종류</strong> — 7개 표준 카테고리 중 필요한 것만 채우면 됩니다:
+    <ul style="margin: 0.5rem 0 0 1.25rem;">
+      <li><code>session.start</code> — 세션 시작 (필수 권장)</li>
+      <li><code>task.acknowledge</code> — 작업 인지 (선택)</li>
+      <li><code>task.complete</code> — 작업 완료 (필수 권장)</li>
+      <li><code>task.error</code> — 에러 (필수 권장)</li>
+      <li><code>input.required</code> — 입력 대기</li>
+      <li><code>resource.limit</code> — 리소스 한계</li>
+      <li><code>user.spam</code> — 빠른 입력 감지</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STEP 4: GitHub 푸시 -->
+<section class="step-section" id="step-4">
+  <div class="step-header">
+    <div class="step-num-large">4</div>
+    <h2>GitHub에 푸시하기</h2>
+  </div>
+  <p class="lead">
+    저장소에 파일을 올립니다. Git 명령 3줄.
+  </p>
+
+  <div class="code-block">git add -A
+git commit -m "Initial commit: 내 첫 크로마이핑 팩"
+git push origin main</div>
+
+  <h3>(선택) 버전 태그 만들기</h3>
+  <p>나중에 업데이트 추적하려면 태그 추천:</p>
+  <div class="code-block">git tag -a v1.0.0 -m "v1.0.0 첫 릴리즈"
+git push origin v1.0.0</div>
+
+  <div class="tip-box">
+    <strong>💡 GitHub Desktop 사용자</strong> — Git 명령어 대신 GitHub Desktop의 [Commit] + [Push origin] 버튼을 클릭하세요.
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STEP 5: cromaizing 등록 -->
+<section class="step-section" id="step-5">
+  <div class="step-header">
+    <div class="step-num-large">5</div>
+    <h2>cromaizing.com에 등록하기</h2>
+  </div>
+  <p class="lead">
+    여기까지 왔으면 다 끝났어요. 마지막은 진짜 30초:
+  </p>
+
+  <ol style="margin: 1rem 0 0 1.5rem; line-height: 2; font-size: 1.0625rem;">
+    <li><a href="/cromaiping/submit" style="color: var(--brand-violet); font-weight: 600;">/cromaiping/submit</a> 페이지 접속</li>
+    <li>로그인 (회원가입 시 핸드폰 인증)</li>
+    <li>GitHub 저장소 URL 입력 (예: <code>https://github.com/내사용자명/cromaiping-mypack</code>)</li>
+    <li>[검증하기] 클릭 → 자동 검증 + 미리보기</li>
+    <li>[즉시 등록하기] 클릭</li>
+    <li>끝! 게시판에 즉시 노출</li>
+  </ol>
+
+  <div class="tip-box">
+    <strong>💡 자동 검증 항목</strong>
+    <ul style="margin: 0.5rem 0 0 1.25rem; line-height: 1.7;">
+      <li>CESP 매니페스트 형식</li>
+      <li>오디오 파일 진위 (매직바이트 검사)</li>
+      <li>사이즈 제한 (50MB / 1MB per file)</li>
+      <li>파일명 형식</li>
+      <li>이름 중복 체크</li>
+    </ul>
+    문제 있으면 친절한 에러 메시지로 안내해드립니다.
+  </div>
+
+  <h3>등록 후 자동으로 일어나는 일</h3>
+  <ul style="margin: 0.5rem 0 0 1.5rem; line-height: 2; color: #374151;">
+    <li>📰 자동 게시글 생성 (제목/설치 가이드/미리듣기 자동 작성)</li>
+    <li>🌐 다른 사용자가 <code>cromaiping packs install &lt;팩이름&gt;</code> 으로 즉시 설치 가능</li>
+    <li>💬 댓글/별점/신고 시스템 활성화</li>
+    <li>📊 다운로드 카운트 자동 집계</li>
+  </ul>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section class="faq">
+  <h2 style="font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 2rem; letter-spacing: -0.025em;">
+    자주 묻는 질문
+  </h2>
+
+  <details class="faq-item">
+    <summary>한국어 음성을 무료로 합성할 수 있나요?</summary>
+    <div class="faq-body">
+      <p>네! macOS는 <code>say -v Yuna</code> 명령으로 한국어 음성 무료 합성 가능. iOS 17+에선 <code>Sora</code> 음성도 가능.</p>
+      <p style="margin-top: 0.5rem;">더 자연스러운 음성은 <strong>네이버 클로바 더빙</strong>(월 5만 자 무료) 추천.</p>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>등록 후 수정할 수 있나요?</summary>
+    <div class="faq-body">
+      <p>네. GitHub 저장소에서 음원/매니페스트를 수정하고 다시 push하면 cromaizing이 자동으로 최신 버전을 가져옵니다.</p>
+      <p style="margin-top: 0.5rem;">단, <code>name</code>(팩 식별자) 변경은 새 팩 등록으로 처리됩니다.</p>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>저작권 문제가 생기면 어떻게 되나요?</summary>
+    <div class="faq-body">
+      <p>등록자의 책임입니다. cromaizing은 인덱서로서 콘텐츠를 호스팅하지 않으며, 침해 신고 접수 시 24-48시간 내 처리됩니다.</p>
+      <p style="margin-top: 0.5rem;"><strong>3회 이상 위반 시 영구 계정 차단</strong> + 모든 등록 콘텐츠 제거. 가입 시 동의한 약관에 명시되어 있습니다.</p>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>다른 IDE(Cursor, Codex 등)에서도 자동으로 동작하나요?</summary>
+    <div class="faq-body">
+      <p>네. 크로마이핑은 11개 IDE 어댑터를 제공합니다. 사용자가 어떤 IDE를 쓰든 같은 팩이 동작합니다.</p>
+      <p style="margin-top: 0.5rem;">팩 1개 등록 = 11개 IDE에서 즉시 사용 가능.</p>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>비공개로 팀 내부에서만 사용할 수도 있나요?</summary>
+    <div class="faq-body">
+      <p>cromaizing.com 등록은 공개입니다. 비공개 사용은 다음 방법으로 가능:</p>
+      <ul style="margin-top: 0.5rem; padding-left: 1.25rem;">
+        <li>GitHub 저장소를 Private으로 만들고, 팀원이 직접 <code>git clone</code>해서 <code>cromaiping packs install-local</code> 사용</li>
+        <li>또는 사내 팩만 모은 자체 레지스트리 운영 (Phase 2 기능 예정)</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>등록 후 인기 있는 팩이 되려면?</summary>
+    <div class="faq-body">
+      <p>다음을 챙기면 좋아요:</p>
+      <ul style="margin-top: 0.5rem; padding-left: 1.25rem;">
+        <li>모든 카테고리 채우기 (7개)</li>
+        <li>각 카테고리에 다양한 사운드 (3-5개)</li>
+        <li>좋은 description (검색에 노출)</li>
+        <li>적절한 tags (게임 / K-POP / 영화 등)</li>
+        <li>README.md에 매력적인 소개</li>
+        <li>커뮤니티 활동 (블로그/SNS 공유)</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<!-- CTA -->
+<section class="cta-final">
+  <h2>준비됐으면 시작해볼까요?</h2>
+  <p>15분이면 충분해요. 막히는 부분 있으면 커뮤니티에 물어보세요.</p>
+  <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+    <a href="/cromaiping/submit" class="btn btn-gradient">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      내 팩 등록하기
+    </a>
+    <a href="/cromaiping/packs" class="btn btn-secondary">팩 둘러보기</a>
+    <a href="https://github.com/cromaizing/cromaiping" target="_blank" class="btn btn-secondary">GitHub</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="border-top: 1px solid var(--border); padding: 2.5rem 1.5rem 2rem; background: white; margin-top: 4rem;">
+  <div style="max-width: 75rem; margin: 0 auto; text-align: center; color: var(--muted-foreground); font-size: 0.875rem;">
+    <p>크로마이핑 · cromaizing.com · 우수에프앤씨 주식회사</p>
+    <p style="margin-top: 0.5rem; font-size: 0.75rem;">
+      <a href="/cromaiping" style="color: inherit;">크로마이핑 소개</a> ·
+      <a href="/cromaiping/packs" style="color: inherit;">팩 목록</a> ·
+      <a href="/cromaiping/submit" style="color: inherit;">팩 등록</a> ·
+      <a href="https://github.com/cromaizing/cromaiping" target="_blank" style="color: inherit;">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+// 코드 블록 클릭 복사
+document.querySelectorAll('.code-block').forEach(block => {
+  block.addEventListener('click', () => {
+    const text = block.textContent.replace(/\s+복사$/, '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      const original = block.textContent;
+      const after = document.createElement('span');
+      after.textContent = ' ✓ 복사됨';
+      after.style.cssText = 'position:absolute; top:0.5rem; right:0.75rem; color:#86efac; font-size:0.6875rem;';
+      block.style.position = 'relative';
+      block.appendChild(after);
+      setTimeout(() => after.remove(), 1500);
+    });
+  });
+});
+</script>
+
+</body>
+</html>
