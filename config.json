@@ -6,7 +6,7 @@
   "language": "ko",
   "categories": {
     "session.start": true,
-    "task.acknowledge": false,
+    "task.acknowledge": true,
     "task.complete": true,
     "task.error": true,
     "input.required": true,
